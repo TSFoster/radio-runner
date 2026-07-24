@@ -96,6 +96,7 @@ class RadioScheduler:
                     execute_radio_off,
                     trigger=DateTrigger(run_date=event.end_time),
                     id=job_id,
+                    args=[self.fsapi_client],
                     misfire_grace_time=60,
                     replace_existing=True
                 )
