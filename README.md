@@ -71,6 +71,20 @@ Interactive OpenAPI documentation is available at: **`http://<SERVER_IP>:8000/do
   * `Radio Alarm [DAB, vol=15]` -> Sets mode to DAB and volume to 15.
   * `Radio Sleep [FM, vol=8, sleep=45]` -> Sets mode to FM, volume 8, and sleep timer for 45 mins.
 
+### 📻 Supported Radio Sources & Aliases
+
+When specifying a source in calendar event titles or via the `source` parameter in API requests, you can use any of the following names or shorthand aliases:
+
+| Mode / Source | Valid Names & Aliases | FSAPI Mode ID |
+| :--- | :--- | :--- |
+| **DAB Radio** | `DAB` | `3` |
+| **FM Radio** | `FM` | `4` |
+| **Internet Radio** | `INTERNET RADIO`, `IRADIO`, `IR` | `0` |
+| **Spotify Connect** | `SPOTIFY` | `1` |
+| **Music Player / USB** | `MUSIC PLAYER`, `USB`, `MEDIA` | `2` |
+| **Auxiliary Input** | `AUX`, `AUX IN` | `5` |
+| **Bluetooth** | `BLUETOOTH`, `BT` | `6` |
+
 ---
 
 ## 🌐 REST API Endpoints
