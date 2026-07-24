@@ -1,0 +1,8 @@
+fastapi>=0.100.0
+uvicorn[standard]>=0.22.0
+httpx>=0.24.0
+apscheduler>=3.10.0
+icalendar>=5.0.0
+recurring-ical-events>=2.0.0
+pydantic>=2.0.0
+python-dotenv>=1.0.0
