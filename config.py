@@ -21,6 +21,8 @@ LOOKAHEAD_HOURS: int = int(os.getenv("LOOKAHEAD_HOURS", "48"))
 DEFAULT_SOURCE: str = os.getenv("DEFAULT_SOURCE", "DAB")
 DEFAULT_VOLUME: int = int(os.getenv("DEFAULT_VOLUME", "12"))
 
-# Server Settings
+# Environment & Server Settings
+ENVIRONMENT: str = os.getenv("ENVIRONMENT", "production").lower()
+RELOAD: bool = os.getenv("RELOAD", "true" if ENVIRONMENT == "development" else "false").lower() == "true"
 SERVER_HOST: str = os.getenv("SERVER_HOST", "0.0.0.0")
 SERVER_PORT: int = int(os.getenv("SERVER_PORT", "8000"))
