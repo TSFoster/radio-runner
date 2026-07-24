@@ -92,6 +92,15 @@ async def get_supported_modes():
         "primary_options": ["DAB", "FM", "INTERNET RADIO", "SPOTIFY", "MUSIC PLAYER", "AUX", "BLUETOOTH"]
     }
 
+@app.get("/api/v1/radio/presets")
+async def get_presets():
+    """Returns the list of saved presets for the active mode."""
+    try:
+        presets = await fsapi_client.get_presets()
+        return {"presets": presets}
+    except FSAPIError as e:
+        raise HTTPException(status_code=502, detail=f"Radio API error: {str(e)}")
+
 @app.post("/api/v1/sync", response_model=CommandResponse)
 async def force_sync():
     """Forces an immediate re-fetch of the calendar feed and updates alarm schedules."""
@@ -108,12 +117,12 @@ async def force_sync():
 @app.post("/api/v1/radio/on", response_model=CommandResponse)
 async def turn_on(
     source: Optional[str] = Query(None, description="Source mode (e.g. DAB, FM, Internet Radio)"),
+    preset: Optional[int] = Query(None, ge=1, le=20, description="Preset station number (1-20)"),
     volume: Optional[int] = Query(None, ge=0, le=32, description="Volume level (0-32)"),
     sleep: Optional[int] = Query(None, ge=0, description="Sleep timer in minutes")
 ):
     """
-    Turns the radio ON. Optionally sets source, volume, and sleep timer.
-    Perfect for triggering from iOS Shortcuts!
+    Turns the radio ON. Optionally sets source mode, preset station, volume, and sleep timer.
     """
     try:
         await fsapi_client.set_power(True)
@@ -122,6 +131,9 @@ async def turn_on(
         if source:
             await fsapi_client.set_mode(source)
             details.append(f"source='{source}'")
+        if preset is not None:
+            await fsapi_client.select_preset(preset)
+            details.append(f"preset={preset}")
         if volume is not None:
             await fsapi_client.set_volume(volume)
             details.append(f"volume={volume}")
@@ -151,6 +163,17 @@ async def set_source(
     try:
         await fsapi_client.set_mode(source)
         return CommandResponse(success=True, message=f"Source set to '{source}'")
+    except FSAPIError as e:
+        raise HTTPException(status_code=502, detail=f"Radio API error: {str(e)}")
+
+@app.post("/api/v1/radio/preset", response_model=CommandResponse)
+async def select_preset(
+    preset: int = Query(..., ge=1, le=20, description="Preset station number (1-20)")
+):
+    """Selects a saved preset station."""
+    try:
+        await fsapi_client.select_preset(preset)
+        return CommandResponse(success=True, message=f"Selected preset {preset}")
     except FSAPIError as e:
         raise HTTPException(status_code=502, detail=f"Radio API error: {str(e)}")
 

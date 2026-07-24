@@ -68,15 +68,16 @@ Interactive OpenAPI documentation is available at: **`http://<SERVER_IP>:8000/do
 * **Radio ON:** Occurs at `event.start_time`.
 * **Radio OFF:** Occurs at `event.end_time`.
 * **Event Overrides:** You can customize settings per event by placing parameters in either the **Title** or **Description/Notes** field:
-  * `Radio Alarm [DAB, vol=15]` -> Sets mode to DAB and volume to 15.
-  * `Radio Sleep (FM vol 8 sleep 45)` -> Sets mode to FM, volume 8, and sleep timer for 45 mins.
+  * `Radio Alarm [DAB, preset=1, vol=15]` -> Sets mode to DAB, selects preset 1, and volume to 15.
+  * `Radio Sleep (FM p2 vol 8 sleep 45)` -> Sets mode to FM, preset 2, volume 8, and sleep timer for 45 mins.
 
 > [!TIP]
 > **Parsing Flexibility:**
 > * **Location:** Place overrides in the event **Title** or the event **Notes/Description**.
+> * **Presets:** Use `preset=1`, `preset 1`, `p=1`, `p1`, or `p 1`.
 > * **Case-Insensitive:** All parameters and mode names are case-insensitive (`dab`, `DAB`, `vol=12`, `VOL=12`).
-> * **Format & Punctuation:** Brackets `[...]`, parentheses `(...)`, and commas are completely optional. `Radio Alarm DAB vol=12` works just as well.
-> * **Order Independent:** Parameters can appear in any order (`vol=14 DAB` is identical to `DAB vol=14`).
+> * **Format & Punctuation:** Brackets `[...]`, parentheses `(...)`, and commas are completely optional. `Radio Alarm DAB p1 vol=12` works just as well.
+> * **Order Independent:** Parameters can appear in any order (`vol=14 DAB p1` is identical to `DAB p1 vol=14`).
 
 ### 📻 Supported Radio Sources & Aliases
 
@@ -102,9 +103,11 @@ The server exposes a clean HTTP REST API for controlling the radio and managing 
 | :--- | :--- | :--- | :--- |
 | **`GET`** | `/api/v1/status` | Get radio state & upcoming scheduled alarms | |
 | **`GET`** | `/api/v1/radio/modes` | List supported radio source modes & aliases | |
-| **`POST`** | `/api/v1/radio/on` | Turn radio ON (with optional parameters) | `?source=DAB&volume=14&sleep=30` |
+| **`GET`** | `/api/v1/radio/presets` | List saved presets for active mode | |
+| **`POST`** | `/api/v1/radio/on` | Turn radio ON (with optional parameters) | `?source=DAB&preset=1&volume=14&sleep=30` |
 | **`POST`** | `/api/v1/radio/off` | Turn radio OFF (standby) | |
 | **`POST`** | `/api/v1/radio/source` | Switch active input mode | `?source=FM` |
+| **`POST`** | `/api/v1/radio/preset` | Select saved preset station (1–20) | `?preset=1` |
 | **`POST`** | `/api/v1/radio/volume` | Set volume level (0–32) | `?volume=12` |
 | **`POST`** | `/api/v1/radio/sleep` | Set sleep timer in minutes | `?minutes=30` |
 | **`POST`** | `/api/v1/sync` | Force an immediate calendar fetch & re-schedule | |

@@ -18,6 +18,7 @@ class RadioAlarmEvent:
     start_time: datetime
     end_time: datetime
     source: Optional[str] = None
+    preset: Optional[int] = None
     volume: Optional[int] = None
     sleep: Optional[int] = None
 
@@ -45,13 +46,18 @@ class CalendarSyncService:
 
     def parse_event_overrides(self, summary: str, description: str) -> Dict[str, Any]:
         """
-        Extracts optional override parameters (source, volume, sleep) from event summary or description.
+        Extracts optional override parameters (source, preset, volume, sleep) from event summary or description.
         Examples:
-          "Wake Up Radio [DAB, vol=15]"
-          "Radio Alarm (FM, volume=10, sleep=30)"
+          "Wake Up Radio [DAB, preset=1, vol=15]"
+          "Radio Alarm (FM, p2, v10, sleep=30)"
         """
         combined = f"{summary} {description}"
         result = {}
+
+        # Preset check (e.g. preset=1, preset 1, p=1, p1, p 1)
+        preset_match = re.search(r'\b(?:preset|p)\s*=?\s*(\d+)\b', combined, re.IGNORECASE)
+        if preset_match:
+            result["preset"] = int(preset_match.group(1))
 
         # Volume check (e.g. vol=15 or volume=15 or v15)
         vol_match = re.search(r'\b(?:vol(?:ume)?|v)\s*=\s*(\d+)\b', combined, re.IGNORECASE)
@@ -138,6 +144,7 @@ class CalendarSyncService:
                 start_time=dtstart,
                 end_time=dtend,
                 source=overrides.get("source"),
+                preset=overrides.get("preset"),
                 volume=overrides.get("volume"),
                 sleep=overrides.get("sleep")
             )

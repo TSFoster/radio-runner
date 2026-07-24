@@ -10,16 +10,25 @@ from calendar_sync import CalendarSyncService, RadioAlarmEvent
 
 logger = logging.getLogger("radio-runner.scheduler")
 
-async def execute_radio_on(fsapi_client: FSAPIClient, source: Optional[str], volume: Optional[int], sleep: Optional[int]):
+async def execute_radio_on(
+    fsapi_client: FSAPIClient,
+    source: Optional[str],
+    preset: Optional[int],
+    volume: Optional[int],
+    sleep: Optional[int]
+):
     """Job callback to turn the radio ON with specified settings."""
-    logger.info(f"⏰ EXECUTING ALARM: Turning radio ON (source={source}, volume={volume}, sleep={sleep})")
+    logger.info(f"⏰ EXECUTING ALARM: Turning radio ON (source={source}, preset={preset}, volume={volume}, sleep={sleep})")
     try:
         await fsapi_client.set_power(True)
         
         target_source = source or config.DEFAULT_SOURCE
         if target_source:
             await fsapi_client.set_mode(target_source)
-            
+
+        if preset is not None and preset > 0:
+            await fsapi_client.select_preset(preset)
+
         target_volume = volume if volume is not None else config.DEFAULT_VOLUME
         if target_volume is not None:
             await fsapi_client.set_volume(target_volume)
@@ -83,7 +92,7 @@ class RadioScheduler:
                     execute_radio_on,
                     trigger=DateTrigger(run_date=event.start_time),
                     id=job_id,
-                    args=[self.fsapi_client, event.source, event.volume, event.sleep],
+                    args=[self.fsapi_client, event.source, event.preset, event.volume, event.sleep],
                     misfire_grace_time=60,
                     replace_existing=True
                 )
@@ -107,6 +116,7 @@ class RadioScheduler:
                 "start": event.start_time.isoformat(),
                 "end": event.end_time.isoformat(),
                 "source": event.source or config.DEFAULT_SOURCE,
+                "preset": event.preset,
                 "volume": event.volume if event.volume is not None else config.DEFAULT_VOLUME,
                 "sleep": event.sleep
             })

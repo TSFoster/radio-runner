@@ -174,6 +174,43 @@ class FSAPIClient:
 
         return await self.set_node_value("netRemote.sys.mode", mode_id)
 
+    async def select_preset(self, preset_number: int) -> bool:
+        """Selects a radio preset number (e.g. 1 to 20)."""
+        # Some firmware requires enabling nav state before triggering selectPreset
+        try:
+            await self.set_node_value("netRemote.nav.state", 1)
+        except Exception:
+            pass
+
+        success = await self.set_node_value("netRemote.nav.action.selectPreset", preset_number)
+
+        try:
+            await self.set_node_value("netRemote.nav.state", 0)
+        except Exception:
+            pass
+
+        return success
+
+    async def get_presets(self) -> List[Dict[str, Any]]:
+        """Fetches the list of saved presets for the current mode."""
+        try:
+            root = await self._send_request("GET/netRemote.nav.presets")
+            presets = []
+            for item in root.findall(".//item"):
+                item_id = item.get("id")
+                # Look for name label node
+                name_node = item.find(".//c8_array")
+                name = name_node.text.strip() if name_node is not None and name_node.text else "Empty"
+                preset_num = int(item_id) + 1 if item_id and item_id.isdigit() else item_id
+                presets.append({
+                    "preset": preset_num,
+                    "name": name
+                })
+            return presets
+        except Exception as e:
+            logger.warning(f"Could not fetch presets from radio: {e}")
+            return []
+
     async def get_status(self) -> Dict[str, Any]:
         """Fetches unified status of the radio."""
         try:
