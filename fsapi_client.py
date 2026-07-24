@@ -1,6 +1,6 @@
 import logging
 import xml.etree.ElementTree as ET
-from typing import Optional, Dict, Any, Union
+from typing import Optional, Dict, Any, Union, List
 import httpx
 
 logger = logging.getLogger("radio-runner.fsapi")
