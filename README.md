@@ -67,9 +67,16 @@ Interactive OpenAPI documentation is available at: **`http://<SERVER_IP>:8000/do
 
 * **Radio ON:** Occurs at `event.start_time`.
 * **Radio OFF:** Occurs at `event.end_time`.
-* **Event Overrides:** You can customize settings per event by placing parameters in the title or description:
+* **Event Overrides:** You can customize settings per event by placing parameters in either the **Title** or **Description/Notes** field:
   * `Radio Alarm [DAB, vol=15]` -> Sets mode to DAB and volume to 15.
-  * `Radio Sleep [FM, vol=8, sleep=45]` -> Sets mode to FM, volume 8, and sleep timer for 45 mins.
+  * `Radio Sleep (FM vol 8 sleep 45)` -> Sets mode to FM, volume 8, and sleep timer for 45 mins.
+
+> [!TIP]
+> **Parsing Flexibility:**
+> * **Location:** Place overrides in the event **Title** or the event **Notes/Description**.
+> * **Case-Insensitive:** All parameters and mode names are case-insensitive (`dab`, `DAB`, `vol=12`, `VOL=12`).
+> * **Format & Punctuation:** Brackets `[...]`, parentheses `(...)`, and commas are completely optional. `Radio Alarm DAB vol=12` works just as well.
+> * **Order Independent:** Parameters can appear in any order (`vol=14 DAB` is identical to `DAB vol=14`).
 
 ### 📻 Supported Radio Sources & Aliases
 
