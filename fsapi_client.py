@@ -133,6 +133,20 @@ class FSAPIClient:
         clamped = max(0, min(32, volume))
         return await self.set_node_value("netRemote.sys.audio.volume", clamped)
 
+    async def volume_up(self, amount: int = 1) -> int:
+        """Increases volume by amount (default 1) based on current volume and returns the new volume level."""
+        current = await self.get_volume()
+        new_vol = max(0, min(32, current + amount))
+        await self.set_volume(new_vol)
+        return new_vol
+
+    async def volume_down(self, amount: int = 1) -> int:
+        """Decreases volume by amount (default 1) based on current volume and returns the new volume level."""
+        current = await self.get_volume()
+        new_vol = max(0, min(32, current - amount))
+        await self.set_volume(new_vol)
+        return new_vol
+
     async def get_sleep(self) -> int:
         val = await self.get_node_value("netRemote.sys.sleep")
         return int(val) if val is not None else 0

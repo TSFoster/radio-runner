@@ -188,6 +188,28 @@ async def set_volume(
     except FSAPIError as e:
         raise HTTPException(status_code=502, detail=f"Radio API error: {str(e)}")
 
+@app.post("/api/v1/radio/volume/up", response_model=CommandResponse)
+async def volume_up(
+    amount: int = Query(1, ge=1, description="Amount to increase volume by")
+):
+    """Increases the radio volume based on current volume (default amount: 1)."""
+    try:
+        new_volume = await fsapi_client.volume_up(amount)
+        return CommandResponse(success=True, message=f"Volume increased to {new_volume}")
+    except FSAPIError as e:
+        raise HTTPException(status_code=502, detail=f"Radio API error: {str(e)}")
+
+@app.post("/api/v1/radio/volume/down", response_model=CommandResponse)
+async def volume_down(
+    amount: int = Query(1, ge=1, description="Amount to decrease volume by")
+):
+    """Decreases the radio volume based on current volume (default amount: 1)."""
+    try:
+        new_volume = await fsapi_client.volume_down(amount)
+        return CommandResponse(success=True, message=f"Volume decreased to {new_volume}")
+    except FSAPIError as e:
+        raise HTTPException(status_code=502, detail=f"Radio API error: {str(e)}")
+
 @app.post("/api/v1/radio/sleep", response_model=CommandResponse)
 async def set_sleep(
     minutes: int = Query(..., ge=0, description="Sleep timer in minutes (0 to disable)")

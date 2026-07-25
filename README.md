@@ -109,6 +109,8 @@ The server exposes a clean HTTP REST API for controlling the radio and managing 
 | **`POST`** | `/api/v1/radio/source` | Switch active input mode | `?source=FM` |
 | **`POST`** | `/api/v1/radio/preset` | Select saved preset station (1–20) | `?preset=1` |
 | **`POST`** | `/api/v1/radio/volume` | Set volume level (0–32) | `?volume=12` |
+| **`POST`** | `/api/v1/radio/volume/up` | Increase volume level (default amount: 1) | `?amount=1` |
+| **`POST`** | `/api/v1/radio/volume/down` | Decrease volume level (default amount: 1) | `?amount=1` |
 | **`POST`** | `/api/v1/radio/sleep` | Set sleep timer in minutes | `?minutes=30` |
 | **`POST`** | `/api/v1/sync` | Force an immediate calendar fetch & re-schedule | |
 
