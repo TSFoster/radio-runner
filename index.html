@@ -10,6 +10,12 @@
             --bg-card: rgba(21, 29, 46, 0.75);
             --bg-card-hover: rgba(30, 42, 66, 0.85);
             --bg-modal: #131b2e;
+            --bg-surface: rgba(15, 23, 42, 0.6);
+            --bg-surface-hover: rgba(30, 42, 66, 0.75);
+            --bg-input: rgba(15, 23, 42, 0.85);
+            --bg-toast: rgba(15, 23, 42, 0.95);
+            --btn-bg: rgba(255, 255, 255, 0.06);
+            --btn-bg-hover: rgba(255, 255, 255, 0.12);
             --border-color: rgba(255, 255, 255, 0.08);
             --border-highlight: rgba(255, 255, 255, 0.18);
             
@@ -27,6 +33,9 @@
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --text-dim: #64748b;
+            --bg-gradient: radial-gradient(at 0% 0%, rgba(6, 182, 212, 0.12) 0px, transparent 50%),
+                            radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.12) 0px, transparent 50%),
+                            radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 50%);
             
             --radius-lg: 18px;
             --radius-md: 12px;
@@ -34,6 +43,41 @@
             --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
             --shadow-modal: 0 25px 50px -12px rgba(0, 0, 0, 0.75);
             --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        html[data-theme="light"] {
+            --bg-dark: #f8fafc;
+            --bg-card: rgba(255, 255, 255, 0.9);
+            --bg-card-hover: #ffffff;
+            --bg-modal: #ffffff;
+            --bg-surface: rgba(241, 245, 249, 0.9);
+            --bg-surface-hover: rgba(226, 232, 240, 0.95);
+            --bg-input: #ffffff;
+            --bg-toast: #ffffff;
+            --btn-bg: rgba(0, 0, 0, 0.04);
+            --btn-bg-hover: rgba(0, 0, 0, 0.08);
+            --border-color: rgba(0, 0, 0, 0.1);
+            --border-highlight: rgba(0, 0, 0, 0.2);
+
+            --primary: #0284c7;
+            --primary-glow: rgba(2, 132, 199, 0.25);
+            --success: #059669;
+            --success-glow: rgba(5, 150, 105, 0.25);
+            --warning: #d97706;
+            --warning-glow: rgba(217, 119, 6, 0.25);
+            --danger: #e11d48;
+            --danger-glow: rgba(225, 29, 72, 0.25);
+            --accent: #7c3aed;
+            --accent-glow: rgba(124, 58, 237, 0.25);
+
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --text-dim: #64748b;
+            --bg-gradient: radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.08) 0px, transparent 50%),
+                            radial-gradient(at 100% 0%, rgba(124, 58, 237, 0.08) 0px, transparent 50%),
+                            radial-gradient(at 50% 100%, rgba(5, 150, 105, 0.06) 0px, transparent 50%);
+            --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.08);
+            --shadow-modal: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
         }
 
         * {
@@ -45,15 +89,13 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
             background-color: var(--bg-dark);
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(6, 182, 212, 0.12) 0px, transparent 50%),
-                radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.12) 0px, transparent 50%),
-                radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 50%);
+            background-image: var(--bg-gradient);
             background-attachment: fixed;
             color: var(--text-main);
             min-height: 100vh;
             padding: 1.5rem;
             line-height: 1.5;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .container {
@@ -75,7 +117,7 @@
             gap: 0.5rem;
             padding: 0.5rem 1rem;
             border-radius: 9999px;
-            background: rgba(15, 23, 42, 0.6);
+            background: var(--bg-surface);
             border: 1px solid var(--border-color);
             font-size: 0.85rem;
             font-weight: 600;
@@ -126,13 +168,13 @@
             cursor: pointer;
             transition: var(--transition);
             user-select: none;
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--btn-bg);
             color: var(--text-main);
             border-color: var(--border-color);
         }
 
         .btn:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: var(--btn-bg-hover);
             border-color: var(--border-highlight);
             transform: translateY(-1px);
         }
@@ -169,6 +211,9 @@
         .btn-icon-only {
             padding: 0.625rem;
             border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .btn svg {
@@ -182,7 +227,7 @@
         }
 
         .form-control {
-            background: rgba(15, 23, 42, 0.8);
+            background: var(--bg-input);
             border: 1px solid var(--border-color);
             color: var(--text-main);
             padding: 0.625rem 0.875rem;
@@ -240,15 +285,15 @@
             border-radius: 50%;
             flex-shrink: 0;
             aspect-ratio: 1 / 1;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid var(--border-highlight);
+            background: var(--bg-surface);
             color: var(--text-muted);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: var(--transition);
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+            box-shadow: var(--shadow-card);
         }
 
         .master-power-btn svg {
@@ -296,7 +341,7 @@
         }
 
         .status-card-item {
-            background: rgba(15, 23, 42, 0.6);
+            background: var(--bg-surface);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
             padding: 1.125rem;
@@ -310,10 +355,10 @@
         }
 
         .status-card-item:hover {
-            background: rgba(30, 42, 66, 0.7);
+            background: var(--bg-surface-hover);
             border-color: var(--border-highlight);
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: var(--shadow-card);
         }
 
         .item-header-row {
@@ -362,7 +407,7 @@
             width: 38px;
             height: 38px;
             border-radius: var(--radius-sm);
-            background: rgba(255, 255, 255, 0.08);
+            background: var(--btn-bg);
             border: 1px solid var(--border-color);
             color: var(--text-main);
             font-size: 1.2rem;
@@ -389,7 +434,7 @@
         .vol-bar-wrapper {
             flex: 1;
             height: 10px;
-            background: rgba(15, 23, 42, 0.8);
+            background: var(--bg-input);
             border: 1px solid var(--border-color);
             border-radius: 5px;
             overflow: hidden;
@@ -426,7 +471,7 @@
         }
 
         dialog.modal::backdrop {
-            background: rgba(5, 8, 15, 0.75);
+            background: rgba(5, 8, 15, 0.65);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
         }
@@ -455,7 +500,7 @@
         }
 
         .modal-close-btn {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--btn-bg);
             border: 1px solid var(--border-color);
             color: var(--text-muted);
             width: 32px;
@@ -483,7 +528,7 @@
         }
 
         .mode-btn {
-            background: rgba(15, 23, 42, 0.6);
+            background: var(--bg-surface);
             border: 1px solid var(--border-color);
             padding: 1rem 0.75rem;
             border-radius: var(--radius-md);
@@ -508,7 +553,7 @@
         }
 
         .mode-btn:hover {
-            background: rgba(255, 255, 255, 0.08);
+            background: var(--bg-surface-hover);
             border-color: var(--border-highlight);
             color: var(--text-main);
         }
@@ -530,7 +575,7 @@
         }
 
         .preset-btn {
-            background: rgba(15, 23, 42, 0.6);
+            background: var(--bg-surface);
             border: 1px solid var(--border-color);
             padding: 0.875rem 0.75rem;
             border-radius: var(--radius-md);
@@ -543,7 +588,7 @@
         }
 
         .preset-btn:hover {
-            background: rgba(255, 255, 255, 0.08);
+            background: var(--bg-surface-hover);
             border-color: var(--border-highlight);
             transform: translateY(-1px);
         }
@@ -586,7 +631,7 @@
             width: 100%;
             height: 12px;
             border-radius: 6px;
-            background: rgba(15, 23, 42, 0.9);
+            background: var(--bg-input);
             outline: none;
             border: 1px solid var(--border-color);
         }
@@ -612,7 +657,7 @@
             flex: 1;
             padding: 0.5rem;
             font-size: 0.8rem;
-            background: rgba(15, 23, 42, 0.5);
+            background: var(--bg-surface);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-sm);
             color: var(--text-muted);
@@ -622,7 +667,7 @@
         }
 
         .vol-preset-btn:hover {
-            background: rgba(255, 255, 255, 0.08);
+            background: var(--bg-surface-hover);
             color: var(--text-main);
         }
 
@@ -637,7 +682,7 @@
             flex: 1;
             min-width: 70px;
             padding: 0.75rem 0.5rem;
-            background: rgba(15, 23, 42, 0.6);
+            background: var(--bg-surface);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
             color: var(--text-muted);
@@ -649,7 +694,7 @@
         }
 
         .sleep-btn:hover {
-            background: rgba(255, 255, 255, 0.08);
+            background: var(--bg-surface-hover);
             color: var(--text-main);
         }
 
@@ -675,7 +720,7 @@
             align-items: center;
             justify-content: space-between;
             padding: 0.875rem 1rem;
-            background: rgba(15, 23, 42, 0.6);
+            background: var(--bg-surface);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
             flex-wrap: wrap;
@@ -691,7 +736,7 @@
         }
 
         .alarm-item {
-            background: rgba(15, 23, 42, 0.5);
+            background: var(--bg-surface);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
             padding: 0.875rem 1rem;
@@ -736,14 +781,14 @@
         }
 
         .toast {
-            background: rgba(15, 23, 42, 0.95);
+            background: var(--bg-toast);
             backdrop-filter: blur(12px);
             border: 1px solid var(--border-highlight);
             border-radius: var(--radius-md);
             padding: 0.875rem 1.25rem;
             color: var(--text-main);
             font-size: 0.875rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            box-shadow: var(--shadow-modal);
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -775,11 +820,16 @@
                 <span id="status-dot" class="status-dot"></span>
                 <span id="status-text">CONNECTING...</span>
             </div>
-            <button id="refresh-btn" class="btn btn-icon-only" title="Refresh Status">
-                <svg viewBox="0 0 24 24">
-                    <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
-                </svg>
-            </button>
+            <div style="display:flex;gap:0.5rem;align-items:center;">
+                <button id="theme-toggle-btn" class="btn btn-icon-only" title="Toggle Theme (Auto / Light / Dark)">
+                    <span id="theme-btn-icon" style="display:flex;align-items:center;justify-content:center;"></span>
+                </button>
+                <button id="refresh-btn" class="btn btn-icon-only" title="Refresh Status">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
+                    </svg>
+                </button>
+            </div>
         </div>
 
         <!-- Main Master Status Hero Card -->
@@ -1022,6 +1072,67 @@
     <div id="toast-container"></div>
 
     <script>
+        // --- Theme Management ---
+        const THEME_KEY = 'radio_runner_theme';
+        const themeToggleBtn = document.getElementById('theme-toggle-btn');
+        const themeBtnIcon = document.getElementById('theme-btn-icon');
+        const systemThemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+        const THEME_ICONS = {
+            system: `<svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><circle cx="12" cy="12" r="9"/><path d="M12 7l-3.5 9h2l.7-2h3.6l.7 2h2zm-0.2 5.3l1.1-3.2 1.1 3.2z"/></svg>`,
+            light: `<svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>`,
+            dark: `<svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`
+        };
+
+        function getSavedTheme() {
+            return localStorage.getItem(THEME_KEY) || 'system';
+        }
+
+        function applyTheme(pref) {
+            let effective = pref;
+            if (pref === 'system') {
+                effective = systemThemeQuery.matches ? 'dark' : 'light';
+                if (themeBtnIcon) themeBtnIcon.innerHTML = THEME_ICONS.system;
+                if (themeToggleBtn) themeToggleBtn.title = 'Theme: Auto (System) - Click for Light';
+            } else if (pref === 'light') {
+                if (themeBtnIcon) themeBtnIcon.innerHTML = THEME_ICONS.light;
+                if (themeToggleBtn) themeToggleBtn.title = 'Theme: Light - Click for Dark';
+            } else if (pref === 'dark') {
+                if (themeBtnIcon) themeBtnIcon.innerHTML = THEME_ICONS.dark;
+                if (themeToggleBtn) themeToggleBtn.title = 'Theme: Dark - Click for Auto';
+            }
+            document.documentElement.dataset.theme = effective;
+        }
+
+        function cycleTheme() {
+            const current = getSavedTheme();
+            let next = 'light';
+            if (current === 'system') next = 'light';
+            else if (current === 'light') next = 'dark';
+            else if (current === 'dark') next = 'system';
+
+            if (next === 'system') {
+                localStorage.removeItem(THEME_KEY);
+            } else {
+                localStorage.setItem(THEME_KEY, next);
+            }
+            applyTheme(next);
+            showToast(`Theme: ${next === 'system' ? 'AUTO (SYSTEM)' : next.toUpperCase()}`);
+        }
+
+        if (themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', cycleTheme);
+        }
+
+        systemThemeQuery.addEventListener('change', () => {
+            if (getSavedTheme() === 'system') {
+                applyTheme('system');
+            }
+        });
+
+        // Initialize Theme immediately
+        applyTheme(getSavedTheme());
+
         // State Management
         let currentStatus = null;
         let isDraggingVolume = false;
