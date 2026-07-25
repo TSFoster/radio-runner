@@ -3,7 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#090d16">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Radio">
     <title>Radio Runner - Dashboard</title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23090d16'/%3E%3Cpath d='M140 370C90 320 90 240 140 190M190 320C160 290 160 250 190 220M320 220C350 250 350 290 320 320M370 190C420 240 420 320 370 370M256 270a30 30 0 1 0 0-60 30 30 0 0 0 0 60z' fill='none' stroke='%2306b6d4' stroke-width='28' stroke-linecap='round'/%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23090d16'/%3E%3Cpath d='M140 370C90 320 90 240 140 190M190 320C160 290 160 250 190 220M320 220C350 250 350 290 320 320M370 190C420 240 420 320 370 370M256 270a30 30 0 1 0 0-60 30 30 0 0 0 0 60z' fill='none' stroke='%2306b6d4' stroke-width='28' stroke-linecap='round'/%3E%3C/svg%3E">
     <style>
         :root {
             --bg-dark: #090d16;
@@ -1665,6 +1672,13 @@
         });
 
         syncCalendarBtn.addEventListener('click', triggerSync);
+
+        // Service Worker Registration for Instant Loading & PWA Homescreen App
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW registration:', err));
+            });
+        }
 
         // Initial Load & Polling setup
         loadModes();

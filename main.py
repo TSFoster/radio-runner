@@ -74,13 +74,51 @@ class CommandResponse(BaseModel):
     message: str
 
 INDEX_HTML_PATH = Path(__file__).parent / "index.html"
+SW_JS_PATH = Path(__file__).parent / "sw.js"
+ICON_DATA_URI = "data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23090d16'/%3E%3Cpath d='M140 370C90 320 90 240 140 190M190 320C160 290 160 250 190 220M320 220C350 250 350 290 320 320M370 190C420 240 420 320 370 370M256 270a30 30 0 1 0 0-60 30 30 0 0 0 0 60z' fill='none' stroke='%2306b6d4' stroke-width='28' stroke-linecap='round'/%3E%3C/svg%3E"
 
 @app.get("/", response_class=FileResponse)
 async def read_root():
     """Serves the main web dashboard user interface."""
     if not INDEX_HTML_PATH.exists():
         raise HTTPException(status_code=404, detail="index.html file not found")
-    return FileResponse(INDEX_HTML_PATH, media_type="text/html")
+    return FileResponse(
+        INDEX_HTML_PATH,
+        media_type="text/html",
+        headers={"Cache-Control": "no-cache, must-revalidate"}
+    )
+
+@app.get("/sw.js", response_class=FileResponse)
+async def read_sw():
+    """Serves the PWA Service Worker."""
+    if not SW_JS_PATH.exists():
+        raise HTTPException(status_code=404, detail="sw.js file not found")
+    return FileResponse(
+        SW_JS_PATH,
+        media_type="application/javascript",
+        headers={"Cache-Control": "no-cache, must-revalidate"}
+    )
+
+@app.get("/manifest.json")
+async def read_manifest():
+    """Serves the Web App Manifest for homescreen installation."""
+    return {
+        "name": "Radio Runner",
+        "short_name": "Radio",
+        "description": "Radio Runner Smart Receiver Dashboard",
+        "start_url": "/",
+        "display": "standalone",
+        "background_color": "#090d16",
+        "theme_color": "#090d16",
+        "icons": [
+            {
+                "src": ICON_DATA_URI,
+                "sizes": "512x512",
+                "type": "image/svg+xml",
+                "purpose": "any maskable"
+            }
+        ]
+    }
 
 @app.get("/api/v1/status", response_model=StatusResponse)
 async def get_status():
