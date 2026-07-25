@@ -75,7 +75,53 @@ class CommandResponse(BaseModel):
 
 INDEX_HTML_PATH = Path(__file__).parent / "index.html"
 SW_JS_PATH = Path(__file__).parent / "sw.js"
-SVG_ICON_CONTENT = """<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' width='512' height='512'><rect width='512' height='512' rx='100' fill='%23090d16'/><circle cx='256' cy='256' r='200' fill='none' stroke='%2306b6d4' stroke-width='24' opacity='0.3'/><path d='M140 370C90 320 90 240 140 190M190 320C160 290 160 250 190 220M320 220C350 250 350 290 320 320M370 190C420 240 420 320 370 370M256 270a30 30 0 1 0 0-60 30 30 0 0 0 0 60z' fill='none' stroke='%2306b6d4' stroke-width='28' stroke-linecap='round'/></svg>"""
+SVG_ICON_CONTENT = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="50%" stop-color="#1e1b4b"/>
+      <stop offset="100%" stop-color="#090d16"/>
+    </linearGradient>
+    <linearGradient id="wave-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#06b6d4"/>
+      <stop offset="50%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <radialGradient id="knob-grad" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#e2e8f0"/>
+      <stop offset="50%" stop-color="#94a3b8"/>
+      <stop offset="100%" stop-color="#334155"/>
+    </radialGradient>
+    <filter id="neon-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <linearGradient id="glass-sheen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.15"/>
+      <stop offset="40%" stop-color="#ffffff" stop-opacity="0.05"/>
+      <stop offset="40.1%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg-grad)"/>
+  <circle cx="256" cy="220" r="150" fill="#06b6d4" opacity="0.12" filter="url(#neon-glow)"/>
+  <g fill="none" stroke="url(#wave-grad)" opacity="0.85" filter="url(#neon-glow)">
+    <path d="M 126 290 A 150 150 0 1 1 386 290" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 166 274 A 110 110 0 1 1 346 274" stroke-width="8" stroke-linecap="round"/>
+    <path d="M 206 258 A 70 70 0 1 1 306 258" stroke-width="10" stroke-linecap="round"/>
+  </g>
+  <g stroke="url(#wave-grad)" fill="none" stroke-linecap="round" filter="url(#neon-glow)">
+    <path d="M 96 230 Q 136 180 176 230 T 256 230 T 336 230 T 416 230" stroke-width="5" opacity="0.9"/>
+    <path d="M 96 230 Q 136 280 176 230 T 256 230 T 336 230 T 416 230" stroke-width="3" opacity="0.6"/>
+  </g>
+  <circle cx="256" cy="360" r="60" fill="#0f172a" stroke="url(#wave-grad)" stroke-width="4" filter="url(#neon-glow)"/>
+  <circle cx="256" cy="360" r="50" fill="url(#knob-grad)"/>
+  <circle cx="256" cy="324" r="5" fill="#06b6d4" filter="url(#neon-glow)"/>
+  <rect width="512" height="512" fill="url(#glass-sheen)"/>
+</svg>"""
 
 @app.get("/", response_class=FileResponse)
 async def read_root():
