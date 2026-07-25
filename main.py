@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from typing import Optional, Dict, Any
 from pathlib import Path
 from fastapi import FastAPI, HTTPException, Query
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
@@ -75,7 +75,7 @@ class CommandResponse(BaseModel):
 
 INDEX_HTML_PATH = Path(__file__).parent / "index.html"
 SW_JS_PATH = Path(__file__).parent / "sw.js"
-ICON_DATA_URI = "data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23090d16'/%3E%3Cpath d='M140 370C90 320 90 240 140 190M190 320C160 290 160 250 190 220M320 220C350 250 350 290 320 320M370 190C420 240 420 320 370 370M256 270a30 30 0 1 0 0-60 30 30 0 0 0 0 60z' fill='none' stroke='%2306b6d4' stroke-width='28' stroke-linecap='round'/%3E%3C/svg%3E"
+SVG_ICON_CONTENT = """<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' width='512' height='512'><rect width='512' height='512' rx='100' fill='%23090d16'/><circle cx='256' cy='256' r='200' fill='none' stroke='%2306b6d4' stroke-width='24' opacity='0.3'/><path d='M140 370C90 320 90 240 140 190M190 320C160 290 160 250 190 220M320 220C350 250 350 290 320 320M370 190C420 240 420 320 370 370M256 270a30 30 0 1 0 0-60 30 30 0 0 0 0 60z' fill='none' stroke='%2306b6d4' stroke-width='28' stroke-linecap='round'/></svg>"""
 
 @app.get("/", response_class=FileResponse)
 async def read_root():
@@ -99,6 +99,16 @@ async def read_sw():
         headers={"Cache-Control": "no-cache, must-revalidate"}
     )
 
+@app.get("/icon.svg", response_class=Response)
+@app.get("/favicon.ico", response_class=Response)
+async def get_icon():
+    """Serves the SVG app icon and favicon."""
+    return Response(
+        content=SVG_ICON_CONTENT,
+        media_type="image/svg+xml",
+        headers={"Cache-Control": "public, max-age=86400"}
+    )
+
 @app.get("/manifest.json")
 async def read_manifest():
     """Serves the Web App Manifest for homescreen installation."""
@@ -112,7 +122,7 @@ async def read_manifest():
         "theme_color": "#090d16",
         "icons": [
             {
-                "src": ICON_DATA_URI,
+                "src": "/icon.svg",
                 "sizes": "512x512",
                 "type": "image/svg+xml",
                 "purpose": "any maskable"
