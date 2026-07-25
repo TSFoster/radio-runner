@@ -600,6 +600,24 @@
             text-transform: uppercase;
         }
 
+        .preset-edit-btn {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            padding: 2px 4px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            opacity: 0.7;
+        }
+
+        .preset-edit-btn:hover {
+            opacity: 1;
+            color: var(--primary);
+            background: var(--btn-bg-hover);
+        }
+
         .preset-name {
             font-size: 0.85rem;
             font-weight: 600;
@@ -1263,6 +1281,36 @@
             }
         }
 
+        // --- Custom Presets LocalStorage Storage ---
+        const CUSTOM_PRESETS_KEY = 'radio_runner_custom_presets';
+
+        function getCustomPresets() {
+            try {
+                return JSON.parse(localStorage.getItem(CUSTOM_PRESETS_KEY)) || {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function saveCustomPreset(mode, presetNum, newName) {
+            const presets = getCustomPresets();
+            const key = mode ? `${mode}_${presetNum}` : `${presetNum}`;
+            if (newName && newName.trim()) {
+                presets[key] = newName.trim();
+            } else {
+                delete presets[key];
+            }
+            localStorage.setItem(CUSTOM_PRESETS_KEY, JSON.stringify(presets));
+            loadPresets(mode);
+            showToast(`Preset P${presetNum} name updated`);
+        }
+
+        function getPresetDisplayName(mode, presetNum, defaultName) {
+            const presets = getCustomPresets();
+            const key = mode ? `${mode}_${presetNum}` : `${presetNum}`;
+            return presets[key] || defaultName || `Preset ${presetNum}`;
+        }
+
         // --- Fetch Saved Presets ---
         async function loadPresets(activeMode) {
             try {
@@ -1270,23 +1318,39 @@
                 const presets = data.presets || [];
                 presetsGrid.innerHTML = '';
                 
-                if (presets.length === 0) {
-                    for (let i = 1; i <= 20; i++) {
-                        const btn = document.createElement('button');
-                        btn.className = 'preset-btn';
-                        btn.innerHTML = `<span class="preset-num">P${i}</span><span class="preset-name">Preset ${i}</span>`;
-                        btn.addEventListener('click', () => selectPreset(i));
-                        presetsGrid.appendChild(btn);
-                    }
-                } else {
-                    presets.forEach(p => {
-                        const btn = document.createElement('button');
-                        btn.className = 'preset-btn';
-                        btn.innerHTML = `<span class="preset-num">P${p.preset}</span><span class="preset-name">${p.name || 'Empty'}</span>`;
-                        btn.addEventListener('click', () => selectPreset(p.preset));
-                        presetsGrid.appendChild(btn);
+                const list = presets.length > 0 ? presets : Array.from({length: 20}, (_, i) => ({ preset: i + 1, name: `Preset ${i + 1}` }));
+
+                list.forEach(p => {
+                    const presetNum = p.preset;
+                    const displayName = getPresetDisplayName(activeMode, presetNum, p.name);
+                    const btn = document.createElement('button');
+                    btn.className = 'preset-btn';
+                    btn.innerHTML = `
+                        <div style="display:flex;justify-content:space-between;align-items:center;width:100%;">
+                            <span class="preset-num">P${presetNum}</span>
+                            <span class="preset-edit-btn" title="Edit Name">✏️</span>
+                        </div>
+                        <span class="preset-name">${displayName}</span>
+                    `;
+
+                    btn.addEventListener('click', (e) => {
+                        if (e.target.classList.contains('preset-edit-btn') || e.target.parentElement.classList.contains('preset-edit-btn')) {
+                            return;
+                        }
+                        selectPreset(presetNum);
                     });
-                }
+
+                    const editBtn = btn.querySelector('.preset-edit-btn');
+                    editBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const newName = prompt(`Rename Preset P${presetNum}:`, displayName);
+                        if (newName !== null) {
+                            saveCustomPreset(activeMode, presetNum, newName);
+                        }
+                    });
+
+                    presetsGrid.appendChild(btn);
+                });
             } catch (err) {
                 presetsGrid.innerHTML = '<div style="font-size:0.8rem;color:var(--text-dim);grid-column:span 12;padding:1rem;">Presets unavailable for current mode</div>';
             }
