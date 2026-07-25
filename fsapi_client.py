@@ -148,12 +148,15 @@ class FSAPIClient:
         return new_vol
 
     async def get_sleep(self) -> int:
+        """Returns the sleep timer in minutes (0 if disabled)."""
         val = await self.get_node_value("netRemote.sys.sleep")
-        return int(val) if val is not None else 0
+        seconds = int(val) if val is not None else 0
+        return seconds // 60
 
     async def set_sleep(self, minutes: int) -> bool:
-        """Sets the sleep timer in minutes (0 to disable)."""
-        return await self.set_node_value("netRemote.sys.sleep", minutes)
+        """Sets the sleep timer in minutes (0 to disable). The device's netRemote.sys.sleep
+        node takes seconds, not minutes, so the value is converted before sending."""
+        return await self.set_node_value("netRemote.sys.sleep", minutes * 60)
 
     async def get_mode(self) -> str:
         val = await self.get_node_value("netRemote.sys.mode")
