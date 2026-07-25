@@ -23,6 +23,6 @@ DEFAULT_VOLUME: int = int(os.getenv("DEFAULT_VOLUME", "12"))
 
 # Environment & Server Settings
 ENVIRONMENT: str = os.getenv("ENVIRONMENT", "production").lower()
-RELOAD: bool = os.getenv("RELOAD", "true" if ENVIRONMENT == "development" else "false").lower() == "true"
+RELOAD: bool = os.getenv("RELOAD", "false" if ENVIRONMENT == "production" else "true").lower() == "true"
 SERVER_HOST: str = os.getenv("SERVER_HOST", "0.0.0.0")
 SERVER_PORT: int = int(os.getenv("SERVER_PORT", "8000"))
