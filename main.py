@@ -1,7 +1,9 @@
 import logging
 from contextlib import asynccontextmanager
 from typing import Optional, Dict, Any
+from pathlib import Path
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
@@ -70,6 +72,15 @@ class StatusResponse(BaseModel):
 class CommandResponse(BaseModel):
     success: bool
     message: str
+
+INDEX_HTML_PATH = Path(__file__).parent / "index.html"
+
+@app.get("/", response_class=FileResponse)
+async def read_root():
+    """Serves the main web dashboard user interface."""
+    if not INDEX_HTML_PATH.exists():
+        raise HTTPException(status_code=404, detail="index.html file not found")
+    return FileResponse(INDEX_HTML_PATH, media_type="text/html")
 
 @app.get("/api/v1/status", response_model=StatusResponse)
 async def get_status():

@@ -1,0 +1,1655 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Radio Runner - Dashboard</title>
+    <style>
+      :root {
+        --bg-dark: #090d16;
+        --bg-card: rgba(21, 29, 46, 0.75);
+        --bg-card-hover: rgba(30, 42, 66, 0.85);
+        --border-color: rgba(255, 255, 255, 0.08);
+        --border-highlight: rgba(255, 255, 255, 0.18);
+
+        --primary: #06b6d4;
+        --primary-glow: rgba(6, 182, 212, 0.35);
+        --success: #10b981;
+        --success-glow: rgba(16, 185, 129, 0.35);
+        --warning: #f59e0b;
+        --warning-glow: rgba(245, 158, 11, 0.35);
+        --danger: #f43f5e;
+        --danger-glow: rgba(244, 63, 94, 0.35);
+        --accent: #8b5cf6;
+        --accent-glow: rgba(139, 92, 246, 0.35);
+
+        --text-main: #f8fafc;
+        --text-muted: #94a3b8;
+        --text-dim: #64748b;
+
+        --radius-lg: 16px;
+        --radius-md: 12px;
+        --radius-sm: 8px;
+        --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif,
+          "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        background-color: var(--bg-dark);
+        background-image:
+          radial-gradient(at 0% 0%, rgba(6, 182, 212, 0.12) 0px, transparent 50%),
+          radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.12) 0px, transparent 50%),
+          radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 50%);
+        background-attachment: fixed;
+        color: var(--text-main);
+        min-height: 100vh;
+        padding: 1.5rem;
+        line-height: 1.5;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      /* --- Header --- */
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .brand-icon {
+        width: 42px;
+        height: 42px;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 15px var(--primary-glow);
+      }
+
+      .brand-icon svg {
+        width: 24px;
+        height: 24px;
+        fill: none;
+        stroke: #ffffff;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .brand h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        background: linear-gradient(to right, #ffffff, #cbd5e1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid var(--border-color);
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+      }
+
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: var(--text-dim);
+        transition: var(--transition);
+      }
+
+      .status-dot.online-on {
+        background-color: var(--success);
+        box-shadow: 0 0 10px var(--success);
+        animation: pulse-dot 2s infinite;
+      }
+
+      .status-dot.online-standby {
+        background-color: var(--warning);
+        box-shadow: 0 0 8px var(--warning);
+      }
+
+      .status-dot.offline {
+        background-color: var(--danger);
+        box-shadow: 0 0 8px var(--danger);
+      }
+
+      @keyframes pulse-dot {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.6;
+          transform: scale(1.2);
+        }
+      }
+
+      /* --- Buttons & Inputs --- */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.625rem 1.25rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        border-radius: var(--radius-md);
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: var(--transition);
+        user-select: none;
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-main);
+        border-color: var(--border-color);
+      }
+
+      .btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: var(--border-highlight);
+        transform: translateY(-1px);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--primary), #0284c7);
+        color: #ffffff;
+        border: none;
+        box-shadow: 0 4px 14px var(--primary-glow);
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(135deg, #0891b2, #0369a1);
+        box-shadow: 0 6px 20px var(--primary-glow);
+      }
+
+      .btn-success {
+        background: linear-gradient(135deg, var(--success), #059669);
+        color: #ffffff;
+        border: none;
+        box-shadow: 0 4px 14px var(--success-glow);
+      }
+
+      .btn-success:hover {
+        background: linear-gradient(135deg, #059669, #047857);
+        box-shadow: 0 6px 20px var(--success-glow);
+      }
+
+      .btn-danger {
+        background: linear-gradient(135deg, var(--danger), #e11d48);
+        color: #ffffff;
+        border: none;
+        box-shadow: 0 4px 14px var(--danger-glow);
+      }
+
+      .btn-danger:hover {
+        background: linear-gradient(135deg, #e11d48, #be123c);
+        box-shadow: 0 6px 20px var(--danger-glow);
+      }
+
+      .btn-accent {
+        background: linear-gradient(135deg, var(--accent), #6d28d9);
+        color: #ffffff;
+        border: none;
+        box-shadow: 0 4px 14px var(--accent-glow);
+      }
+
+      .btn-accent:hover {
+        background: linear-gradient(135deg, #7c3aed, #5b21b6);
+        box-shadow: 0 6px 20px var(--accent-glow);
+      }
+
+      .btn-icon-only {
+        padding: 0.625rem;
+        border-radius: var(--radius-md);
+      }
+
+      .btn svg {
+        width: 18px;
+        height: 18px;
+        stroke-width: 2;
+        stroke: currentColor;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .form-control {
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid var(--border-color);
+        color: var(--text-main);
+        padding: 0.625rem 0.875rem;
+        border-radius: var(--radius-md);
+        font-size: 0.9rem;
+        font-family: inherit;
+        outline: none;
+        transition: var(--transition);
+      }
+
+      .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-glow);
+      }
+
+      select.form-control {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        padding-right: 2.5rem;
+      }
+
+      /* --- Grid Layout --- */
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 1.5rem;
+      }
+
+      .card {
+        background: var(--bg-card);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-card);
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.25rem;
+      }
+
+      .card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-main);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .card-title svg {
+        width: 20px;
+        height: 20px;
+        stroke: var(--primary);
+        stroke-width: 2;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      /* Hero Power Deck (Span 12) */
+      .hero-card {
+        grid-column: span 12;
+        background: linear-gradient(135deg, rgba(21, 29, 46, 0.9), rgba(15, 23, 42, 0.95));
+        border: 1px solid var(--border-highlight);
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .hero-main {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+      }
+
+      .power-btn-container {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+      }
+
+      .master-power-btn {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        aspect-ratio: 1 / 1;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        background: rgba(15, 23, 42, 0.8);
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: var(--transition);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+      }
+
+      .master-power-btn svg {
+        width: 34px;
+        height: 34px;
+        stroke-width: 2.5;
+        stroke: currentColor;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        transition: var(--transition);
+      }
+
+      .master-power-btn.active {
+        background: linear-gradient(135deg, var(--success), #059669);
+        color: #ffffff;
+        border-color: rgba(255, 255, 255, 0.3);
+        box-shadow: 0 0 30px var(--success-glow);
+      }
+
+      .master-power-btn:hover {
+        transform: scale(1.05);
+      }
+
+      .master-power-btn.active:hover {
+        box-shadow: 0 0 40px var(--success-glow);
+      }
+
+      .hero-status-info h2 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        line-height: 1.2;
+        letter-spacing: -0.02em;
+      }
+
+      .hero-status-info p {
+        font-size: 0.95rem;
+        color: var(--text-muted);
+        margin-top: 0.25rem;
+      }
+
+      .hero-stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 1rem;
+        width: 100%;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-color);
+      }
+
+      .stat-pill {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid var(--border-color);
+        padding: 0.875rem 1rem;
+        border-radius: var(--radius-md);
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      .stat-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-dim);
+        font-weight: 600;
+      }
+
+      .stat-value {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--text-main);
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* Power On Custom Modal / Collapsible Drawer */
+      .power-on-options {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        padding: 1.25rem;
+        margin-top: 0.5rem;
+        display: none;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .power-on-options.open {
+        display: flex;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.375rem;
+      }
+
+      .form-group label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text-muted);
+      }
+
+      /* Mode / Source Selector (Span 7) */
+      .modes-card {
+        grid-column: span 7;
+      }
+
+      .modes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 0.75rem;
+      }
+
+      .mode-btn {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid var(--border-color);
+        padding: 0.875rem 0.5rem;
+        border-radius: var(--radius-md);
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-align: center;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .mode-btn svg {
+        width: 22px;
+        height: 22px;
+        stroke-width: 2;
+        stroke: currentColor;
+        fill: none;
+      }
+
+      .mode-btn:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: var(--border-highlight);
+        color: var(--text-main);
+      }
+
+      .mode-btn.active {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(139, 92, 246, 0.2));
+        border-color: var(--primary);
+        color: var(--primary);
+        box-shadow: 0 0 15px var(--primary-glow);
+      }
+
+      /* Volume Control Card (Span 5) */
+      .volume-card {
+        grid-column: span 5;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .volume-display {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+      }
+
+      .volume-number {
+        font-size: 2.25rem;
+        font-weight: 800;
+        color: var(--primary);
+        font-variant-numeric: tabular-nums;
+        line-height: 1;
+      }
+
+      .volume-slider-container {
+        position: relative;
+        margin: 1.5rem 0;
+      }
+
+      .volume-slider {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 10px;
+        border-radius: 5px;
+        background: rgba(15, 23, 42, 0.9);
+        outline: none;
+        border: 1px solid var(--border-color);
+        transition: var(--transition);
+      }
+
+      .volume-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: var(--primary);
+        cursor: pointer;
+        box-shadow: 0 0 12px var(--primary-glow);
+        transition: var(--transition);
+      }
+
+      .volume-slider::-webkit-slider-thumb:hover {
+        transform: scale(1.15);
+        background: #22d3ee;
+      }
+
+      .volume-actions {
+        display: flex;
+        gap: 0.75rem;
+      }
+
+      .volume-actions .btn {
+        flex: 1;
+      }
+
+      .vol-presets {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+      }
+
+      .vol-preset-btn {
+        flex: 1;
+        padding: 0.375rem;
+        font-size: 0.75rem;
+        background: rgba(15, 23, 42, 0.5);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        color: var(--text-muted);
+        cursor: pointer;
+        text-align: center;
+        transition: var(--transition);
+      }
+
+      .vol-preset-btn:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--text-main);
+      }
+
+      /* Presets Card (Span 7) */
+      .presets-card {
+        grid-column: span 7;
+      }
+
+      .presets-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 0.75rem;
+        max-height: 240px;
+        overflow-y: auto;
+        padding-right: 0.25rem;
+      }
+
+      .preset-btn {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid var(--border-color);
+        padding: 0.75rem;
+        border-radius: var(--radius-md);
+        text-align: left;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      .preset-btn:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: var(--border-highlight);
+        transform: translateY(-1px);
+      }
+
+      .preset-num {
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: var(--primary);
+        text-transform: uppercase;
+      }
+
+      .preset-name {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-main);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* Sleep Timer Card (Span 5) */
+      .sleep-card {
+        grid-column: span 5;
+      }
+
+      .sleep-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .sleep-btn {
+        flex: 1;
+        min-width: 60px;
+        padding: 0.625rem 0.5rem;
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-align: center;
+        cursor: pointer;
+        transition: var(--transition);
+      }
+
+      .sleep-btn:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--text-main);
+      }
+
+      .sleep-btn.active {
+        background: rgba(139, 92, 246, 0.2);
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      .sleep-custom-row {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .sleep-custom-row input {
+        flex: 1;
+      }
+
+      /* Calendar Alarms Card (Span 12) */
+      .calendar-card {
+        grid-column: span 12;
+      }
+
+      .calendar-info-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.875rem 1rem;
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        margin-bottom: 1.25rem;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+
+      .calendar-meta {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+      }
+
+      .alarms-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .alarm-item {
+        background: rgba(15, 23, 42, 0.5);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        padding: 1rem 1.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        transition: var(--transition);
+      }
+
+      .alarm-item:hover {
+        background: rgba(15, 23, 42, 0.8);
+        border-color: var(--border-highlight);
+      }
+
+      .alarm-main {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .alarm-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius-md);
+        background: rgba(6, 182, 212, 0.15);
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .alarm-icon svg {
+        width: 20px;
+        height: 20px;
+        stroke-width: 2;
+        stroke: currentColor;
+        fill: none;
+      }
+
+      .alarm-details h4 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text-main);
+      }
+
+      .alarm-details p {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-top: 0.125rem;
+      }
+
+      .alarm-overrides {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .override-tag {
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.25rem 0.625rem;
+        border-radius: 9999px;
+        background: rgba(139, 92, 246, 0.15);
+        color: var(--accent);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+      }
+
+      .no-alarms {
+        text-align: center;
+        padding: 2.5rem 1rem;
+        color: var(--text-dim);
+        font-size: 0.9rem;
+      }
+
+      /* --- Toast Notifications --- */
+      #toast-container {
+        position: fixed;
+        bottom: 1.5rem;
+        right: 1.5rem;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        max-width: 360px;
+        width: calc(100% - 3rem);
+      }
+
+      .toast {
+        background: rgba(15, 23, 42, 0.95);
+        backdrop-filter: blur(12px);
+        border: 1px solid var(--border-highlight);
+        border-radius: var(--radius-md);
+        padding: 0.875rem 1.25rem;
+        color: var(--text-main);
+        font-size: 0.875rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        animation: slide-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .toast.success {
+        border-left: 4px solid var(--success);
+      }
+
+      .toast.error {
+        border-left: 4px solid var(--danger);
+      }
+
+      @keyframes slide-in {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      /* --- Responsiveness --- */
+      @media (max-width: 992px) {
+        .modes-card {
+          grid-column: span 12;
+        }
+        .volume-card {
+          grid-column: span 12;
+        }
+        .presets-card {
+          grid-column: span 12;
+        }
+        .sleep-card {
+          grid-column: span 12;
+        }
+      }
+
+      @media (max-width: 576px) {
+        body {
+          padding: 1rem;
+        }
+        .hero-main {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .master-power-btn {
+          width: 64px;
+          height: 64px;
+          flex-shrink: 0;
+          aspect-ratio: 1 / 1;
+        }
+        .master-power-btn svg {
+          width: 28px;
+          height: 28px;
+        }
+        .header-actions {
+          width: 100%;
+          justify-content: space-between;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <header>
+        <div class="header-actions" style="width: 100%; justify-content: space-between">
+          <div class="status-badge">
+            <span id="status-dot" class="status-dot"></span>
+            <span id="status-text">CONNECTING...</span>
+          </div>
+          <button id="refresh-btn" class="btn btn-icon-only" title="Refresh Status">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"
+              />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Dashboard Grid -->
+      <div class="dashboard-grid">
+        <!-- Hero Power Deck -->
+        <div class="card hero-card">
+          <div class="hero-main">
+            <div class="power-btn-container">
+              <button id="master-power-btn" class="master-power-btn" title="Toggle Power">
+                <svg viewBox="0 0 24 24">
+                  <path d="M18.36 6.64a9 9 0 1 1-12.73 0M12 2v10" />
+                </svg>
+              </button>
+              <div class="hero-status-info">
+                <h2 id="hero-power-title">Radio Standby</h2>
+                <p id="hero-power-subtitle">Click the power icon to turn on</p>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 0.75rem">
+              <button id="toggle-options-btn" class="btn">
+                <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg>
+                Power ON with Options
+              </button>
+            </div>
+          </div>
+
+          <!-- Collapsible Power ON with Options Panel -->
+          <div id="power-on-options" class="power-on-options">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="power-on-source">Source Mode</label>
+                <select id="power-on-source" class="form-control">
+                  <option value="">Default (Current)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="power-on-preset">Preset Station (1-20)</label>
+                <input
+                  type="number"
+                  id="power-on-preset"
+                  class="form-control"
+                  min="1"
+                  max="20"
+                  placeholder="Optional"
+                />
+              </div>
+              <div class="form-group">
+                <label for="power-on-volume">Volume Level (0-32)</label>
+                <input
+                  type="number"
+                  id="power-on-volume"
+                  class="form-control"
+                  min="0"
+                  max="32"
+                  placeholder="Optional"
+                />
+              </div>
+              <div class="form-group">
+                <label for="power-on-sleep">Sleep Timer (mins)</label>
+                <input
+                  type="number"
+                  id="power-on-sleep"
+                  class="form-control"
+                  min="0"
+                  placeholder="Optional"
+                />
+              </div>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem">
+              <button id="power-on-submit-btn" class="btn btn-success">
+                <svg viewBox="0 0 24 24"><path d="M18.36 6.64a9 9 0 1 1-12.73 0M12 2v10" /></svg>
+                Power ON with Settings
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Stats Row -->
+          <div class="hero-stats-row">
+            <div class="stat-pill">
+              <span class="stat-label">Power State</span>
+              <span id="stat-power" class="stat-value">--</span>
+            </div>
+            <div class="stat-pill">
+              <span class="stat-label">Active Source</span>
+              <span id="stat-mode" class="stat-value">--</span>
+            </div>
+            <div class="stat-pill">
+              <span class="stat-label">Volume</span>
+              <span id="stat-volume" class="stat-value">-- / 32</span>
+            </div>
+            <div class="stat-pill">
+              <span class="stat-label">Sleep Timer</span>
+              <span id="stat-sleep" class="stat-value">Disabled</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Source Selection Card -->
+        <div class="card modes-card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <svg viewBox="0 0 24 24"><path d="M2 18h20M2 12h20M2 6h20" /></svg>
+              Audio Source
+            </h3>
+          </div>
+          <div id="modes-grid" class="modes-grid">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Volume Control Card -->
+        <div class="card volume-card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M11 5L6 9H2v6h4l5 4V5zM15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"
+                />
+              </svg>
+              Volume Control
+            </h3>
+          </div>
+          <div>
+            <div class="volume-display">
+              <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500"
+                >Master Level</span
+              >
+              <span id="volume-num" class="volume-number">0</span>
+            </div>
+            <div class="volume-slider-container">
+              <input
+                type="range"
+                id="volume-slider"
+                class="volume-slider"
+                min="0"
+                max="32"
+                value="0"
+              />
+            </div>
+            <div class="volume-actions">
+              <button id="vol-down-btn" class="btn">
+                <svg viewBox="0 0 24 24"><path d="M5 12h14" /></svg>
+                -1
+              </button>
+              <button id="vol-up-btn" class="btn">
+                <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg>
+                +1
+              </button>
+            </div>
+            <div class="vol-presets">
+              <button class="vol-preset-btn" data-vol="0">Mute</button>
+              <button class="vol-preset-btn" data-vol="8">Quiet (8)</button>
+              <button class="vol-preset-btn" data-vol="15">Medium (15)</button>
+              <button class="vol-preset-btn" data-vol="24">Loud (24)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Presets Card -->
+        <div class="card presets-card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <svg viewBox="0 0 24 24">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+              </svg>
+              Saved Presets
+            </h3>
+            <span id="presets-mode-label" style="font-size: 0.8rem; color: var(--text-dim)"
+              >Mode: --</span
+            >
+          </div>
+          <div id="presets-grid" class="presets-grid">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Sleep Timer Card -->
+        <div class="card sleep-card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <svg viewBox="0 0 24 24">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+              </svg>
+              Sleep Timer
+            </h3>
+          </div>
+          <div class="sleep-options">
+            <button class="sleep-btn" data-mins="0">Off</button>
+            <button class="sleep-btn" data-mins="15">15m</button>
+            <button class="sleep-btn" data-mins="30">30m</button>
+            <button class="sleep-btn" data-mins="45">45m</button>
+            <button class="sleep-btn" data-mins="60">60m</button>
+            <button class="sleep-btn" data-mins="90">90m</button>
+          </div>
+          <div class="sleep-custom-row">
+            <input
+              type="number"
+              id="sleep-custom-input"
+              class="form-control"
+              min="0"
+              placeholder="Custom mins..."
+            />
+            <button id="sleep-custom-btn" class="btn btn-accent">Set</button>
+          </div>
+        </div>
+
+        <!-- Calendar & Scheduled Alarms Card -->
+        <div class="card calendar-card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M19 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zM16 2v4M8 2v4M3 10h18"
+                />
+              </svg>
+              Scheduled Alarms & Calendar Sync
+            </h3>
+            <button id="sync-calendar-btn" class="btn btn-primary">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"
+                />
+              </svg>
+              Sync Now
+            </button>
+          </div>
+
+          <div class="calendar-info-bar">
+            <div class="calendar-meta">
+              <span
+                >Configured:
+                <strong id="cal-configured" style="color: var(--text-main)">--</strong></span
+              >
+              <span
+                >Last Sync:
+                <strong id="cal-last-sync" style="color: var(--text-main)">--</strong></span
+              >
+            </div>
+            <span
+              id="cal-upcoming-count"
+              style="font-size: 0.85rem; color: var(--primary); font-weight: 600"
+              >0 Alarms Scheduled</span
+            >
+          </div>
+
+          <div id="alarms-list" class="alarms-list">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container"></div>
+
+    <script>
+      // State Management
+      let currentStatus = null;
+      let isDraggingVolume = false;
+      let volumeDragTimeout = null;
+      let supportedModes = [];
+
+      // DOM Element Cache
+      const statusDot = document.getElementById("status-dot");
+      const statusText = document.getElementById("status-text");
+      const refreshBtn = document.getElementById("refresh-btn");
+      const masterPowerBtn = document.getElementById("master-power-btn");
+      const heroPowerTitle = document.getElementById("hero-power-title");
+      const heroPowerSubtitle = document.getElementById("hero-power-subtitle");
+      const toggleOptionsBtn = document.getElementById("toggle-options-btn");
+      const powerOnOptions = document.getElementById("power-on-options");
+      const powerOnSource = document.getElementById("power-on-source");
+      const powerOnPreset = document.getElementById("power-on-preset");
+      const powerOnVolume = document.getElementById("power-on-volume");
+      const powerOnSleep = document.getElementById("power-on-sleep");
+      const powerOnSubmitBtn = document.getElementById("power-on-submit-btn");
+
+      const statPower = document.getElementById("stat-power");
+      const statMode = document.getElementById("stat-mode");
+      const statVolume = document.getElementById("stat-volume");
+      const statSleep = document.getElementById("stat-sleep");
+
+      const modesGrid = document.getElementById("modes-grid");
+      const volumeNum = document.getElementById("volume-num");
+      const volumeSlider = document.getElementById("volume-slider");
+      const volUpBtn = document.getElementById("vol-up-btn");
+      const volDownBtn = document.getElementById("vol-down-btn");
+      const presetsGrid = document.getElementById("presets-grid");
+      const presetsModeLabel = document.getElementById("presets-mode-label");
+
+      const sleepCustomInput = document.getElementById("sleep-custom-input");
+      const sleepCustomBtn = document.getElementById("sleep-custom-btn");
+      const syncCalendarBtn = document.getElementById("sync-calendar-btn");
+      const calConfigured = document.getElementById("cal-configured");
+      const calLastSync = document.getElementById("cal-last-sync");
+      const calUpcomingCount = document.getElementById("cal-upcoming-count");
+      const alarmsList = document.getElementById("alarms-list");
+      const toastContainer = document.getElementById("toast-container");
+
+      // SVG Icons helper for modes
+      const modeIcons = {
+        DAB: '<svg viewBox="0 0 24 24"><path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5M19.1 4.9c3.9 3.9 3.9 10.3 0 14.2M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/></svg>',
+        FM: '<svg viewBox="0 0 24 24"><path d="M2 12h20M12 2v20M6 6l12 12"/></svg>',
+        "INTERNET RADIO":
+          '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
+        SPOTIFY:
+          '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 11.5c3-1 6-1 8.5.5M7 14.5c3.5-1 7-1 10 .5M9 8.5c2.5-1 5.5-1 7.5.5"/></svg>',
+        BLUETOOTH: '<svg viewBox="0 0 24 24"><path d="m7 7 10 10-5 5V2l5 5L7 17"/></svg>',
+        AUX: '<svg viewBox="0 0 24 24"><path d="M12 2v6M12 18v4M6.34 7.76l4.24 4.24M13.41 14.83l4.25 4.25M6.34 16.24l4.24-4.24M13.41 9.17l4.25-4.25"/></svg>',
+        "MUSIC PLAYER":
+          '<svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13M9 9l12-2M6 18a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM18 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>',
+      };
+
+      // --- Toast Notification Helper ---
+      function showToast(message, type = "success") {
+        const toast = document.createElement("div");
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `
+                <span>${message}</span>
+                <button style="background:none;border:none;color:var(--text-muted);cursor:pointer;" onclick="this.parentElement.remove()">✕</button>
+            `;
+        toastContainer.appendChild(toast);
+        setTimeout(() => {
+          toast.style.opacity = "0";
+          toast.style.transform = "translateX(100%)";
+          toast.style.transition = "all 0.3s ease";
+          setTimeout(() => toast.remove(), 300);
+        }, 4000);
+      }
+
+      // --- API Helper ---
+      async function fetchAPI(endpoint, options = {}) {
+        try {
+          const response = await fetch(endpoint, options);
+          const data = await response.json();
+          if (!response.ok) {
+            throw new Error(data.detail || "API Request failed");
+          }
+          return data;
+        } catch (err) {
+          console.error(`API Error (${endpoint}):`, err);
+          showToast(err.message, "error");
+          throw err;
+        }
+      }
+
+      // --- Fetch Supported Modes ---
+      async function loadModes() {
+        try {
+          const data = await fetchAPI("/api/v1/radio/modes");
+          supportedModes = data.primary_options || [
+            "DAB",
+            "FM",
+            "INTERNET RADIO",
+            "SPOTIFY",
+            "MUSIC PLAYER",
+            "AUX",
+            "BLUETOOTH",
+          ];
+
+          // Populate Power On Options Select
+          powerOnSource.innerHTML = '<option value="">Default (Current)</option>';
+          supportedModes.forEach((mode) => {
+            const opt = document.createElement("option");
+            opt.value = mode;
+            opt.textContent = mode;
+            powerOnSource.appendChild(opt);
+          });
+
+          // Populate Modes Grid
+          modesGrid.innerHTML = "";
+          supportedModes.forEach((mode) => {
+            const iconSvg = modeIcons[mode] || modeIcons["DAB"];
+            const btn = document.createElement("button");
+            btn.className = "mode-btn";
+            btn.dataset.mode = mode;
+            btn.innerHTML = `${iconSvg}<span>${mode}</span>`;
+            btn.addEventListener("click", () => setMode(mode));
+            modesGrid.appendChild(btn);
+          });
+        } catch (err) {
+          console.error("Failed to load modes:", err);
+        }
+      }
+
+      // --- Fetch Saved Presets ---
+      async function loadPresets(activeMode) {
+        presetsModeLabel.textContent = `Mode: ${activeMode || "--"}`;
+        try {
+          const data = await fetchAPI("/api/v1/radio/presets");
+          const presets = data.presets || [];
+          presetsGrid.innerHTML = "";
+
+          if (presets.length === 0) {
+            // Fallback preset grid (1 to 20)
+            for (let i = 1; i <= 20; i++) {
+              const btn = document.createElement("button");
+              btn.className = "preset-btn";
+              btn.innerHTML = `<span class="preset-num">P${i}</span><span class="preset-name">Preset ${i}</span>`;
+              btn.addEventListener("click", () => selectPreset(i));
+              presetsGrid.appendChild(btn);
+            }
+          } else {
+            presets.forEach((p) => {
+              const btn = document.createElement("button");
+              btn.className = "preset-btn";
+              btn.innerHTML = `<span class="preset-num">P${p.preset}</span><span class="preset-name">${p.name || "Empty"}</span>`;
+              btn.addEventListener("click", () => selectPreset(p.preset));
+              presetsGrid.appendChild(btn);
+            });
+          }
+        } catch (err) {
+          // If presets unavailable for mode
+          presetsGrid.innerHTML =
+            '<div style="font-size:0.8rem;color:var(--text-dim);grid-column:span 12;padding:1rem;">Presets unavailable for current mode</div>';
+        }
+      }
+
+      // --- Poll Status ---
+      async function pollStatus() {
+        try {
+          const data = await fetch("/api/v1/status").then((r) => r.json());
+          currentStatus = data;
+          updateUI(data);
+        } catch (err) {
+          statusDot.className = "status-dot offline";
+          statusText.textContent = "OFFLINE";
+          heroPowerTitle.textContent = "Radio Unreachable";
+          heroPowerSubtitle.textContent = "Failed to communicate with radio runner backend";
+        }
+      }
+
+      // --- UI Update Function ---
+      function updateUI(data) {
+        const radio = data.radio || {};
+        const calendar = data.calendar || {};
+
+        // Connection Status Badge & Hero Header
+        if (!radio.online) {
+          statusDot.className = "status-dot offline";
+          statusText.textContent = "RADIO OFFLINE";
+          masterPowerBtn.classList.remove("active");
+          heroPowerTitle.textContent = "Radio Offline";
+          heroPowerSubtitle.textContent = radio.error || "Radio API error";
+          statPower.textContent = "OFFLINE";
+        } else if (radio.power) {
+          statusDot.className = "status-dot online-on";
+          statusText.textContent = "ONLINE · ON";
+          masterPowerBtn.classList.add("active");
+          heroPowerTitle.textContent = `Playing ${radio.mode || "Radio"}`;
+          heroPowerSubtitle.textContent = `Volume ${radio.volume} / 32`;
+          statPower.textContent = "ON";
+          statPower.style.color = "var(--success)";
+        } else {
+          statusDot.className = "status-dot online-standby";
+          statusText.textContent = "ONLINE · STANDBY";
+          masterPowerBtn.classList.remove("active");
+          heroPowerTitle.textContent = "Radio Standby";
+          heroPowerSubtitle.textContent = "Click power icon to turn on";
+          statPower.textContent = "STANDBY";
+          statPower.style.color = "var(--warning)";
+        }
+
+        // Stats
+        statMode.textContent = radio.mode || "STANDBY";
+        statVolume.textContent = radio.online ? `${radio.volume} / 32` : "--";
+        statSleep.textContent =
+          radio.sleep_minutes && radio.sleep_minutes > 0 ? `${radio.sleep_minutes}m` : "Disabled";
+
+        // Volume Slider (only update if not currently dragging)
+        if (!isDraggingVolume && radio.online) {
+          volumeSlider.value = radio.volume;
+          volumeNum.textContent = radio.volume;
+        }
+
+        // Active Mode Pill
+        document.querySelectorAll(".mode-btn").forEach((btn) => {
+          if (
+            radio.power &&
+            radio.mode &&
+            btn.dataset.mode.toUpperCase() === radio.mode.toUpperCase()
+          ) {
+            btn.classList.add("active");
+          } else {
+            btn.classList.remove("active");
+          }
+        });
+
+        // Active Sleep Pills
+        document.querySelectorAll(".sleep-btn").forEach((btn) => {
+          const mins = parseInt(btn.dataset.mins);
+          if (radio.sleep_minutes === mins) {
+            btn.classList.add("active");
+          } else {
+            btn.classList.remove("active");
+          }
+        });
+
+        // Presets trigger when mode changes
+        if (radio.power && radio.mode && presetsModeLabel.dataset.activeMode !== radio.mode) {
+          presetsModeLabel.dataset.activeMode = radio.mode;
+          loadPresets(radio.mode);
+        }
+
+        // Calendar Section
+        calConfigured.textContent = calendar.calendar_url_configured ? "Yes" : "No (URL missing)";
+        calConfigured.style.color = calendar.calendar_url_configured
+          ? "var(--success)"
+          : "var(--danger)";
+
+        if (calendar.last_sync_utc) {
+          const date = new Date(calendar.last_sync_utc);
+          calLastSync.textContent = date.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+        } else {
+          calLastSync.textContent = "Never";
+        }
+
+        const upcoming = calendar.upcoming_alarms || [];
+        calUpcomingCount.textContent = `${upcoming.length} Alarm${upcoming.length === 1 ? "" : "s"} Scheduled`;
+
+        renderAlarms(upcoming);
+      }
+
+      // --- Render Scheduled Alarms ---
+      function renderAlarms(alarms) {
+        if (!alarms || alarms.length === 0) {
+          alarmsList.innerHTML = `
+                    <div class="no-alarms">
+                        <svg style="width:36px;height:36px;stroke:var(--text-dim);fill:none;stroke-width:1.5;margin-bottom:0.5rem;" viewBox="0 0 24 24"><path d="M19 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zM16 2v4M8 2v4M3 10h18"/></svg>
+                        <p>No upcoming radio alarms scheduled for the next 48 hours.</p>
+                    </div>
+                `;
+          return;
+        }
+
+        alarmsList.innerHTML = "";
+        alarms.forEach((alarm) => {
+          const startTime = alarm.start || alarm.start_time;
+          const endTime = alarm.end || alarm.end_time;
+          const start = startTime
+            ? new Date(startTime).toLocaleString([], {
+                month: "short",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            : "--";
+          const end = endTime
+            ? new Date(endTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+            : "--";
+
+          const item = document.createElement("div");
+          item.className = "alarm-item";
+
+          let tagsHtml = "";
+          if (alarm.source) tagsHtml += `<span class="override-tag">Mode: ${alarm.source}</span>`;
+          if (alarm.preset)
+            tagsHtml += `<span class="override-tag">Preset: P${alarm.preset}</span>`;
+          if (alarm.volume) tagsHtml += `<span class="override-tag">Vol: ${alarm.volume}</span>`;
+          if (alarm.sleep) tagsHtml += `<span class="override-tag">Sleep: ${alarm.sleep}m</span>`;
+
+          item.innerHTML = `
+                    <div class="alarm-main">
+                        <div class="alarm-icon">
+                            <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                        </div>
+                        <div class="alarm-details">
+                            <h4>${alarm.summary || "Radio Alarm"}</h4>
+                            <p>⏰ ${start} - ${end}</p>
+                        </div>
+                    </div>
+                    <div class="alarm-overrides">
+                        ${tagsHtml || '<span style="font-size:0.75rem;color:var(--text-dim)">Default settings</span>'}
+                    </div>
+                `;
+          alarmsList.appendChild(item);
+        });
+      }
+
+      // --- Radio Actions ---
+
+      async function togglePower() {
+        if (currentStatus && currentStatus.radio && currentStatus.radio.power) {
+          const res = await fetchAPI("/api/v1/radio/off", { method: "POST" });
+          showToast(res.message);
+        } else {
+          const res = await fetchAPI("/api/v1/radio/on", { method: "POST" });
+          showToast(res.message);
+        }
+        pollStatus();
+      }
+
+      async function powerOnWithOptions() {
+        const params = new URLSearchParams();
+        if (powerOnSource.value) params.append("source", powerOnSource.value);
+        if (powerOnPreset.value) params.append("preset", powerOnPreset.value);
+        if (powerOnVolume.value !== "") params.append("volume", powerOnVolume.value);
+        if (powerOnSleep.value !== "") params.append("sleep", powerOnSleep.value);
+
+        const res = await fetchAPI(`/api/v1/radio/on?${params.toString()}`, { method: "POST" });
+        showToast(res.message);
+        powerOnOptions.classList.remove("open");
+        pollStatus();
+      }
+
+      async function setMode(mode) {
+        const res = await fetchAPI(`/api/v1/radio/source?source=${encodeURIComponent(mode)}`, {
+          method: "POST",
+        });
+        showToast(res.message);
+        pollStatus();
+      }
+
+      async function selectPreset(presetNum) {
+        const res = await fetchAPI(`/api/v1/radio/preset?preset=${presetNum}`, { method: "POST" });
+        showToast(res.message);
+        pollStatus();
+      }
+
+      async function setVolume(vol) {
+        const clamped = Math.max(0, Math.min(32, vol));
+        volumeNum.textContent = clamped;
+        const res = await fetchAPI(`/api/v1/radio/volume?volume=${clamped}`, { method: "POST" });
+        showToast(res.message);
+        pollStatus();
+      }
+
+      async function adjustVolume(dir, amount = 1) {
+        const endpoint = dir === "up" ? "/api/v1/radio/volume/up" : "/api/v1/radio/volume/down";
+        const res = await fetchAPI(`${endpoint}?amount=${amount}`, { method: "POST" });
+        showToast(res.message);
+        pollStatus();
+      }
+
+      async function setSleep(mins) {
+        const res = await fetchAPI(`/api/v1/radio/sleep?minutes=${mins}`, { method: "POST" });
+        showToast(res.message);
+        pollStatus();
+      }
+
+      async function triggerSync() {
+        syncCalendarBtn.disabled = true;
+        syncCalendarBtn.innerHTML = "Syncing...";
+        try {
+          const res = await fetchAPI("/api/v1/sync", { method: "POST" });
+          showToast(res.message);
+          pollStatus();
+        } finally {
+          syncCalendarBtn.disabled = false;
+          syncCalendarBtn.innerHTML = `
+                    <svg viewBox="0 0 24 24"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
+                    Sync Now
+                `;
+        }
+      }
+
+      // --- Event Listeners ---
+      masterPowerBtn.addEventListener("click", togglePower);
+
+      toggleOptionsBtn.addEventListener("click", () => {
+        powerOnOptions.classList.toggle("open");
+      });
+
+      powerOnSubmitBtn.addEventListener("click", powerOnWithOptions);
+
+      refreshBtn.addEventListener("click", () => {
+        refreshBtn.style.transform = "rotate(360deg)";
+        refreshBtn.style.transition = "transform 0.5s ease";
+        pollStatus().then(() => {
+          setTimeout(() => {
+            refreshBtn.style.transform = "none";
+            refreshBtn.style.transition = "none";
+          }, 500);
+        });
+      });
+
+      // Volume slider dragging logic
+      volumeSlider.addEventListener("input", (e) => {
+        isDraggingVolume = true;
+        volumeNum.textContent = e.target.value;
+        clearTimeout(volumeDragTimeout);
+      });
+
+      volumeSlider.addEventListener("change", (e) => {
+        setVolume(parseInt(e.target.value));
+        volumeDragTimeout = setTimeout(() => {
+          isDraggingVolume = false;
+        }, 1500);
+      });
+
+      volUpBtn.addEventListener("click", () => adjustVolume("up", 1));
+      volDownBtn.addEventListener("click", () => adjustVolume("down", 1));
+
+      document.querySelectorAll(".vol-preset-btn").forEach((btn) => {
+        btn.addEventListener("click", () => setVolume(parseInt(btn.dataset.vol)));
+      });
+
+      document.querySelectorAll(".sleep-btn").forEach((btn) => {
+        btn.addEventListener("click", () => setSleep(parseInt(btn.dataset.mins)));
+      });
+
+      sleepCustomBtn.addEventListener("click", () => {
+        const val = parseInt(sleepCustomInput.value);
+        if (!isNaN(val) && val >= 0) {
+          setSleep(val);
+          sleepCustomInput.value = "";
+        } else {
+          showToast("Please enter a valid number of minutes", "error");
+        }
+      });
+
+      syncCalendarBtn.addEventListener("click", triggerSync);
+
+      // Initial Initialization
+      loadModes();
+      pollStatus();
+
+      // Regular Polling (Every 5 Seconds)
+      setInterval(pollStatus, 5000);
+    </script>
+  </body>
+</html>

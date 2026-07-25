@@ -12,7 +12,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application source code
-COPY config.py fsapi_client.py calendar_sync.py scheduler.py main.py ./
+COPY config.py fsapi_client.py calendar_sync.py scheduler.py main.py index.html ./
 
 # Expose server port
 EXPOSE 8000
