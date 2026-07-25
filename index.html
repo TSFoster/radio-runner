@@ -9,8 +9,8 @@
     <meta name="apple-mobile-web-app-title" content="Radio">
     <title>Radio Runner - Dashboard</title>
     <link rel="manifest" href="/manifest.json">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23090d16'/%3E%3Cpath d='M140 370C90 320 90 240 140 190M190 320C160 290 160 250 190 220M320 220C350 250 350 290 320 320M370 190C420 240 420 320 370 370M256 270a30 30 0 1 0 0-60 30 30 0 0 0 0 60z' fill='none' stroke='%2306b6d4' stroke-width='28' stroke-linecap='round'/%3E%3C/svg%3E">
-    <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23090d16'/%3E%3Cpath d='M140 370C90 320 90 240 140 190M190 320C160 290 160 250 190 220M320 220C350 250 350 290 320 320M370 190C420 240 420 320 370 370M256 270a30 30 0 1 0 0-60 30 30 0 0 0 0 60z' fill='none' stroke='%2306b6d4' stroke-width='28' stroke-linecap='round'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml" href="/icon.svg">
+    <link rel="apple-touch-icon" href="/icon.svg">
     <style>
         :root {
             --bg-dark: #090d16;
@@ -830,9 +830,21 @@
         }
 
         @media (max-width: 576px) {
-            body { padding: 1rem; }
-            .master-power-btn { width: 64px; height: 64px; }
-            .master-power-btn svg { width: 28px; height: 28px; }
+            body { padding: 0.5rem; justify-content: flex-start; }
+            .top-bar { margin-bottom: 0.5rem; }
+            .status-hero-card { padding: 0.875rem; gap: 0.75rem; border-radius: var(--radius-md); }
+            .hero-power-section { gap: 0.75rem; }
+            .power-btn-container { gap: 0.875rem; }
+            .master-power-btn { width: 56px; height: 56px; }
+            .master-power-btn svg { width: 26px; height: 26px; }
+            .hero-status-info h2 { font-size: 1.25rem; }
+            .hero-status-info p { font-size: 0.8rem; }
+            .status-items-grid { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; padding-top: 0.625rem; }
+            .status-card-item { padding: 0.625rem; gap: 0.25rem; }
+            .item-label { font-size: 0.7rem; }
+            .item-value { font-size: 1rem; }
+            .vol-controls-row { gap: 0.375rem; }
+            .btn-vol-step { width: 30px; height: 30px; font-size: 0.95rem; }
         }
     </style>
 </head>
@@ -871,11 +883,6 @@
                         <p id="hero-power-subtitle">Tap power icon to turn on</p>
                     </div>
                 </div>
-
-                <button id="btn-open-power-on" class="btn btn-sm">
-                    <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-                    Power ON Options
-                </button>
             </div>
 
             <!-- Status Items Grid (Tapping these opens modals) -->
@@ -888,7 +895,6 @@
                         <span class="item-icon-tag">📻</span>
                     </div>
                     <div id="stat-mode" class="item-value">--</div>
-                    <span class="item-subtext">Tap to change source ›</span>
                 </div>
 
                 <!-- 2. Volume Item (with +/- quick step buttons & full modal tap) -->
@@ -904,7 +910,6 @@
                         </div>
                         <button id="quick-vol-up" class="btn-vol-step" title="Increase Volume">+</button>
                     </div>
-                    <span class="item-subtext">Tap bar or header for full volume controls ›</span>
                 </div>
 
                 <!-- 3. Presets Item -->
@@ -914,7 +919,6 @@
                         <span class="item-icon-tag">🔖</span>
                     </div>
                     <div id="stat-presets-text" class="item-value">Presets (1-20)</div>
-                    <span class="item-subtext">Tap to select preset station ›</span>
                 </div>
 
                 <!-- 4. Sleep Timer Item -->
@@ -924,7 +928,6 @@
                         <span class="item-icon-tag">🌙</span>
                     </div>
                     <div id="stat-sleep" class="item-value">Disabled</div>
-                    <span class="item-subtext">Tap to set timer ›</span>
                 </div>
 
                 <!-- 5. Calendar Alarms Item -->
@@ -934,7 +937,6 @@
                         <span class="item-icon-tag">📅</span>
                     </div>
                     <div id="stat-alarms-count" class="item-value">--</div>
-                    <span class="item-subtext">Tap for sync & schedule details ›</span>
                 </div>
 
             </div>
@@ -1057,42 +1059,6 @@
         </div>
     </dialog>
 
-    <!-- Modal 6: Power ON Options -->
-    <dialog id="modal-power-on" class="modal">
-        <div class="modal-container">
-            <div class="modal-header">
-                <h3 class="modal-title">
-                    <svg style="width:20px;height:20px;stroke:var(--success);fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M18.36 6.64a9 9 0 1 1-12.73 0M12 2v10"/></svg>
-                    Power ON with Settings
-                </h3>
-                <button class="modal-close-btn" onclick="document.getElementById('modal-power-on').close()">✕</button>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:1rem;">
-                <div style="display:flex;flex-direction:column;gap:0.35rem;">
-                    <label style="font-size:0.8rem;font-weight:600;color:var(--text-muted);">Source Mode</label>
-                    <select id="power-on-source" class="form-control">
-                        <option value="">Default (Current)</option>
-                    </select>
-                </div>
-                <div style="display:flex;flex-direction:column;gap:0.35rem;">
-                    <label style="font-size:0.8rem;font-weight:600;color:var(--text-muted);">Preset Station (1-20)</label>
-                    <input type="number" id="power-on-preset" class="form-control" min="1" max="20" placeholder="Optional">
-                </div>
-                <div style="display:flex;flex-direction:column;gap:0.35rem;">
-                    <label style="font-size:0.8rem;font-weight:600;color:var(--text-muted);">Volume Level (0-32)</label>
-                    <input type="number" id="power-on-volume" class="form-control" min="0" max="32" placeholder="Optional">
-                </div>
-                <div style="display:flex;flex-direction:column;gap:0.35rem;">
-                    <label style="font-size:0.8rem;font-weight:600;color:var(--text-muted);">Sleep Timer (mins)</label>
-                    <input type="number" id="power-on-sleep" class="form-control" min="0" placeholder="Optional">
-                </div>
-                <button id="power-on-submit-btn" class="btn btn-success" style="margin-top:0.5rem;">
-                    Power ON Radio
-                </button>
-            </div>
-        </div>
-    </dialog>
-
     <!-- Toast Notification Container -->
     <div id="toast-container"></div>
 
@@ -1172,7 +1138,6 @@
         const masterPowerBtn = document.getElementById('master-power-btn');
         const heroPowerTitle = document.getElementById('hero-power-title');
         const heroPowerSubtitle = document.getElementById('hero-power-subtitle');
-        const btnOpenPowerOn = document.getElementById('btn-open-power-on');
 
         const statMode = document.getElementById('stat-mode');
         const statVolumeText = document.getElementById('stat-volume-text');
@@ -1183,13 +1148,11 @@
         const statSleep = document.getElementById('stat-sleep');
         const statAlarmsCount = document.getElementById('stat-alarms-count');
 
-        // Modals
         const modalSource = document.getElementById('modal-source');
         const modalVolume = document.getElementById('modal-volume');
         const modalPresets = document.getElementById('modal-presets');
         const modalSleep = document.getElementById('modal-sleep');
         const modalCalendar = document.getElementById('modal-calendar');
-        const modalPowerOn = document.getElementById('modal-power-on');
 
         // Modal Specific Controls
         const modesGrid = document.getElementById('modes-grid');
@@ -1204,12 +1167,6 @@
         const calConfigured = document.getElementById('cal-configured');
         const calLastSync = document.getElementById('cal-last-sync');
         const alarmsList = document.getElementById('alarms-list');
-
-        const powerOnSource = document.getElementById('power-on-source');
-        const powerOnPreset = document.getElementById('power-on-preset');
-        const powerOnVolume = document.getElementById('power-on-volume');
-        const powerOnSleep = document.getElementById('power-on-sleep');
-        const powerOnSubmitBtn = document.getElementById('power-on-submit-btn');
 
         const toastContainer = document.getElementById('toast-container');
 
@@ -1263,15 +1220,6 @@
                 const data = await fetchAPI('/api/v1/radio/modes');
                 supportedModes = data.primary_options || ["DAB", "FM", "INTERNET RADIO", "SPOTIFY", "MUSIC PLAYER", "AUX", "BLUETOOTH"];
                 
-                // Populate Power On Select
-                powerOnSource.innerHTML = '<option value="">Default (Current)</option>';
-                supportedModes.forEach(mode => {
-                    const opt = document.createElement('option');
-                    opt.value = mode;
-                    opt.textContent = mode;
-                    powerOnSource.appendChild(opt);
-                });
-
                 // Populate Modes Grid
                 modesGrid.innerHTML = '';
                 supportedModes.forEach(mode => {
@@ -1507,19 +1455,6 @@
             pollStatus();
         }
 
-        async function powerOnWithOptions() {
-            const params = new URLSearchParams();
-            if (powerOnSource.value) params.append('source', powerOnSource.value);
-            if (powerOnPreset.value) params.append('preset', powerOnPreset.value);
-            if (powerOnVolume.value !== '') params.append('volume', powerOnVolume.value);
-            if (powerOnSleep.value !== '') params.append('sleep', powerOnSleep.value);
-
-            const res = await fetchAPI(`/api/v1/radio/on?${params.toString()}`, { method: 'POST' });
-            showToast(res.message);
-            modalPowerOn.close();
-            pollStatus();
-        }
-
         async function setMode(mode) {
             const res = await fetchAPI(`/api/v1/radio/source?source=${encodeURIComponent(mode)}`, { method: 'POST' });
             showToast(res.message);
@@ -1619,14 +1554,8 @@
             modalCalendar.showModal();
         });
 
-        // Power ON Options Modal Trigger
-        btnOpenPowerOn.addEventListener('click', () => {
-            modalPowerOn.showModal();
-        });
-
         // --- Other Controls & Modal Action Listeners ---
         masterPowerBtn.addEventListener('click', togglePower);
-        powerOnSubmitBtn.addEventListener('click', powerOnWithOptions);
 
         refreshBtn.addEventListener('click', () => {
             refreshBtn.style.transform = 'rotate(360deg)';
@@ -1673,10 +1602,10 @@
 
         syncCalendarBtn.addEventListener('click', triggerSync);
 
-        // Service Worker Registration for Instant Loading & PWA Homescreen App
+        // Clean up legacy Service Worker registrations & caches
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW registration:', err));
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+                for (let r of registrations) r.unregister();
             });
         }
 
