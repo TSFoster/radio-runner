@@ -36,6 +36,10 @@ class FSAPIClient:
         self.sid: Optional[str] = None
         self._mode_map: Dict[str, int] = SUPPORTED_MODES.copy()
 
+    async def _get(self, url: str, params: dict) -> httpx.Response:
+        async with httpx.AsyncClient(timeout=self.timeout) as client:
+            return await client.get(url, params=params)
+
     async def _send_request(self, endpoint: str, params: Optional[dict] = None) -> ET.Element:
         """Sends an HTTP GET request to the FSAPI endpoint and parses the XML response."""
         if params is None:
@@ -50,16 +54,34 @@ class FSAPIClient:
         params["pin"] = self.pin
         url = f"{self.base_url}/{endpoint}"
 
-        async with httpx.AsyncClient(timeout=self.timeout) as client:
-            try:
-                response = await client.get(url, params=params)
-                response.raise_for_status()
-            except httpx.HTTPStatusError as e:
+        try:
+            response = await self._get(url, params)
+            response.raise_for_status()
+        except httpx.HTTPStatusError as e:
+            # Some firmware rejects a stale/expired session ID with a bare HTTP 404
+            # instead of an FS_TIMEOUT-style XML body, so this must be handled here,
+            # not just via the FS_* status check below. Drop the cached session and
+            # retry once with a freshly created one.
+            if endpoint != "CREATE_SESSION":
+                logger.warning(
+                    f"HTTP {e.response.status_code} requesting {url}; session '{self.sid}' "
+                    "may have expired, re-creating session and retrying once..."
+                )
+                self.sid = None
+                await self.create_session()
+                params["sid"] = self.sid
+                try:
+                    response = await self._get(url, params)
+                    response.raise_for_status()
+                except httpx.HTTPStatusError as e2:
+                    logger.error(f"HTTP error {e2.response.status_code} requesting {url}")
+                    raise FSAPIError(f"HTTP {e2.response.status_code}") from e2
+            else:
                 logger.error(f"HTTP error {e.response.status_code} requesting {url}")
                 raise FSAPIError(f"HTTP {e.response.status_code}") from e
-            except httpx.RequestError as e:
-                logger.error(f"Connection error to radio at {url}: {e}")
-                raise FSAPIError(f"Connection error to radio: {e}") from e
+        except httpx.RequestError as e:
+            logger.error(f"Connection error to radio at {url}: {e}")
+            raise FSAPIError(f"Connection error to radio: {e}") from e
 
         try:
             root = ET.fromstring(response.text)
@@ -70,17 +92,22 @@ class FSAPIClient:
         status_node = root.find("status")
         status_text = status_node.text if status_node is not None else ""
 
-        if status_text == "FS_TIMEOUT" or status_text == "FS_NODE_DOES_NOT_EXIST":
+        if status_text in ("FS_TIMEOUT", "FS_NODE_DOES_NOT_EXIST", "FS_PACKET_BAD", "FS_FAIL"):
             # Session might have expired; retry once after recreating session
             if endpoint != "CREATE_SESSION":
                 logger.warning(f"FSAPI status '{status_text}', attempting session re-creation...")
+                self.sid = None
                 await self.create_session()
                 params["sid"] = self.sid
-                async with httpx.AsyncClient(timeout=self.timeout) as client:
-                    resp = await client.get(url, params=params)
-                    root = ET.fromstring(resp.text)
-                    status_node = root.find("status")
-                    status_text = status_node.text if status_node is not None else ""
+                try:
+                    response = await self._get(url, params)
+                    response.raise_for_status()
+                    root = ET.fromstring(response.text)
+                except (httpx.HTTPStatusError, ET.ParseError) as e:
+                    logger.error(f"Retry after session re-creation failed for {url}: {e}")
+                    raise FSAPIError("Retry after session re-creation failed") from e
+                status_node = root.find("status")
+                status_text = status_node.text if status_node is not None else ""
 
         if status_text != "FS_OK":
             raise FSAPIError(f"FSAPI returned status: {status_text}")
