@@ -70,7 +70,7 @@ class FSAPIClient:
         status_node = root.find("status")
         status_text = status_node.text if status_node is not None else ""
 
-        if status_text == "FS_TIMEOUT" or status_text == "FS_NODE_DOES_NOT_EXIST":
+        if status_text in ("FS_TIMEOUT", "FS_NODE_DOES_NOT_EXIST", "FS_PACKET_BAD", "FS_FAIL"):
             # Session might have expired; retry once after recreating session
             if endpoint != "CREATE_SESSION":
                 logger.warning(f"FSAPI status '{status_text}', attempting session re-creation...")
