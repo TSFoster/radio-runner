@@ -1602,10 +1602,12 @@
 
         syncCalendarBtn.addEventListener('click', triggerSync);
 
-        // Clean up legacy Service Worker registrations & caches
+        // Register Service Worker for offline caching and background updates
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(registrations => {
-                for (let r of registrations) r.unregister();
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch((error) => {
+                    console.error('ServiceWorker registration failed: ', error);
+                });
             });
         }
 
