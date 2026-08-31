@@ -1,11 +1,17 @@
-version: '3.8'
-
 services:
   radio-runner:
     build: .
-    container_name: radio-runner
+    image: radio-runner:local
     restart: unless-stopped
-    ports:
-      - "8000:8000"
     env_file:
       - .env
+    group_add:
+      - "998"
+    labels:
+      - "docktail.service.enable=true"
+      - "docktail.service.name=radio"
+      - "docktail.service.port=8000"
+      - "docktail.service.service-protocol=https"
+      - "docktail.service.1.name=radio"
+      - "docktail.service.1.port=8000"
+      - "docktail.service.1.service-protocol=http"
