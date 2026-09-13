@@ -11,7 +11,7 @@ A lightweight, secure home server to control a **Roberts Revival iStream 2** (or
 * **Event Duration Control:** Radio turns **ON** at event start time and **OFF (standby)** at event end time.
 * **Smart Recurrence & Override Handling:** Parses recurring events, modified single instances, and cancellations accurately via `recurring-ical-events`.
 * **Dynamic Event Overrides:** Optionally specify custom source, volume, or sleep timer directly in calendar event titles or descriptions (e.g., `Wake Up [DAB, vol=14, sleep=30]`).
-* **Wipe & Re-schedule Strategy:** Periodic sync (every 15 min by default) ensures schedule updates are reflected seamlessly without orphaned jobs.
+* **Wipe & Re-schedule Strategy:** Periodic sync (every 15 min by default) plus automatic pre-event re-fetches (1 minute before any event starts or finishes) ensure schedule updates and cancellations are reflected seamlessly without orphaned jobs.
 
 ---
 
