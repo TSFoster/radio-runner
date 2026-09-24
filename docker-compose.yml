@@ -6,7 +6,7 @@ services:
     env_file:
       - .env
     group_add:
-      - "998"
+      - "2000"
     labels:
       - "docktail.service.enable=true"
       - "docktail.service.name=radio"
