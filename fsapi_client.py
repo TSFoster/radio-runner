@@ -226,7 +226,8 @@ class FSAPIClient:
         except Exception:
             pass
 
-        success = await self.set_node_value("netRemote.nav.action.selectPreset", preset_number)
+        # The radio's preset indices are 0-based; our API/UI is 1-based (see get_presets)
+        success = await self.set_node_value("netRemote.nav.action.selectPreset", preset_number - 1)
 
         try:
             await self.set_node_value("netRemote.nav.state", 0)
